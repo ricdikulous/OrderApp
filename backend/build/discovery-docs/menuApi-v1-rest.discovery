@@ -1,0 +1,185 @@
+{
+ "kind": "discovery#restDescription",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ItkJgARlmkf-jlAF5c8AtFbi7SA\"",
+ "discoveryVersion": "v1",
+ "id": "menuApi:v1",
+ "name": "menuApi",
+ "version": "v1",
+ "description": "This is an API",
+ "ownerDomain": "api.backend.myapplication.ric.example.com",
+ "ownerName": "api.backend.myapplication.ric.example.com",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rest",
+ "baseUrl": "https://myApplicationId.appspot.com/_ah/api/menuApi/v1/",
+ "basePath": "/_ah/api/menuApi/v1/",
+ "rootUrl": "https://myApplicationId.appspot.com/_ah/api/",
+ "servicePath": "menuApi/v1/",
+ "batchPath": "batch",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "JsonMap": {
+   "id": "JsonMap",
+   "type": "object"
+  },
+  "MenuItemEntity": {
+   "id": "MenuItemEntity",
+   "type": "object",
+   "properties": {
+    "allergens": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "description": {
+     "type": "string"
+    },
+    "ingredients": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "keyString": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "price": {
+     "type": "string",
+     "format": "int64"
+    },
+    "servingUrl": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string",
+     "format": "int64"
+    }
+   }
+  },
+  "MenuItemEntityCollection": {
+   "id": "MenuItemEntityCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "MenuItemEntity"
+     }
+    }
+   }
+  },
+  "MenuTypesEntity": {
+   "id": "MenuTypesEntity",
+   "type": "object",
+   "properties": {
+    "menuTypes": {
+     "$ref": "JsonMap"
+    }
+   }
+  },
+  "MenuVersionEntity": {
+   "id": "MenuVersionEntity",
+   "type": "object",
+   "properties": {
+    "version": {
+     "type": "integer",
+     "format": "int32"
+    }
+   }
+  }
+ },
+ "methods": {
+  "getMenuItems": {
+   "id": "menuApi.getMenuItems",
+   "path": "menuitementitycollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "MenuItemEntityCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getMenuTypes": {
+   "id": "menuApi.getMenuTypes",
+   "path": "menutypesentity",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "MenuTypesEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getMenuVersion": {
+   "id": "menuApi.getMenuVersion",
+   "path": "menuversionentity",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "MenuVersionEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}

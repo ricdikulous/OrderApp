@@ -1,0 +1,75 @@
+{
+  "project_info": {
+    "project_id": "endpointstutorial-1119",
+    "project_number": "542222206441",
+    "name": "EndpointsTutorial"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542222206441:android:465c234037767942",
+        "client_id": "android:com.example.ric.myapplication.backend",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.example.ric.myapplication.backend",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542222206441:android:5da11ef25d01fd0c",
+        "client_id": "android:com.dikulous.ric.orderapp",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.dikulous.ric.orderapp",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 2,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dikulous.ric.orderapp.MainActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/fresh"
+        android:scaleType="centerCrop"/>
+
+        <Button
+            android:id="@+id/create_new_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:hint="@string/create_new_order"
+            android:layout_marginBottom="15dp"
+            android:onClick="handleCreateNewOrderButtonClick"/>
+        <Button
+            android:id="@+id/continue_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/create_new_order"
+            android:layout_centerHorizontal="true"
+            android:hint="@string/continue_order"
+            android:onClick="handleContinueOrderButtonClick"/>
+</RelativeLayout>

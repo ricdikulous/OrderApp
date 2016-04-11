@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">OrderApp</string>
+    <string name="place_order">Place Order</string>
+    <string name="order_received">Order Received</string>
+    <string name="order_processed">Order is being Processed</string>
+    <string name="order_dispatched">Order has been dispatched</string>
+    <string name="view_menu">View Menu</string>
+    <string name="price">Price: $%1$s</string>
+    <string name="select_amount">Select amount:</string>
+    <string name="add_to_order_button">Add to order</string>
+    <string name="create_new_order">Create new Order</string>
+    <string name="continue_order">Continue order</string>
+    <string name="action_cart">View  order</string>
+    <string name="title_activity_menu_tabbed">MenuTabbedActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="gcm_senderId">542222206441</string>
+</resources>
