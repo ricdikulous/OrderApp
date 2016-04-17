@@ -2,6 +2,7 @@ package com.example.ric.myapplication.backend.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ric on 30/03/16.
@@ -13,22 +14,22 @@ public class MenuItemEntity {
     String keyString;
     Long price;
     Long type;
-    ArrayList<String> ingredients;
-    ArrayList<String> allergens;
+    List<String> ingredients;
+    List<String> allergens;
 
-    public ArrayList<String> getIngredients() {
+    public List<String> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<String> ingredients) {
+    public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public ArrayList<String> getAllergens() {
+    public List<String> getAllergens() {
         return allergens;
     }
 
-    public void setAllergens(ArrayList<String> allergens) {
+    public void setAllergens(List<String> allergens) {
         this.allergens = allergens;
     }
 

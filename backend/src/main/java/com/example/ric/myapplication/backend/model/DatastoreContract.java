@@ -43,11 +43,17 @@ public class DatastoreContract {
         public static final String COLUMN_NAME_MENU_ITEM_KEY = "itemKey";
         public static final String COLUMN_NAME_AMOUNT = "amount";
         public static final String COLUMN_NAME_INGREDIENTS_EXCLUDED = "ingredientsExcluded";
+        public static final String COLUMN_NAME_MENU_NAME = "name";
     }
 
     public static final class TypesEmbeddedEntry{
         public static final String COLUMN_NAME_KEY = "key";
         public static final String COLUMN_NAME_NAME = "name";
+    }
 
+    public static final class ChannelKeysEntry{
+        public static final String KIND = "ChannelKeys";
+        public static final String KEY = "keys";
+        public static final String COLUMN_NAME_KEYS = "keys";
     }
 }

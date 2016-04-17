@@ -29,6 +29,22 @@
         <servlet-name>PayPalServlet</servlet-name>
         <servlet-class>com.example.ric.myapplication.backend.servlet.PayPalServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MessageServlet</servlet-name>
+        <servlet-class>com.example.ric.myapplication.backend.servlet.MessageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ChannelCloseServlet</servlet-name>
+        <servlet-class>com.example.ric.myapplication.backend.servlet.ChannelCloseServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ChannelCloseServlet</servlet-name>
+        <url-pattern>/channelclose</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MessageServlet</servlet-name>
+        <url-pattern>/message</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>

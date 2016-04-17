@@ -10,6 +10,15 @@ public class OrderItemEntity {
     String menuItemKeyString;
     Integer amount;
     List<String> ingredientsExcluded;
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getMenuItemKeyString() {
         return menuItemKeyString;

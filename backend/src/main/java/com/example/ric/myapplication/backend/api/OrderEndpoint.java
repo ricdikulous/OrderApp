@@ -5,6 +5,8 @@ import com.example.ric.myapplication.backend.model.DatastoreContract;
 import com.example.ric.myapplication.backend.model.OrderItemEntity;
 import com.example.ric.myapplication.backend.model.OrderEntity;
 import com.example.ric.myapplication.backend.model.OrderReceiptEntity;
+import com.example.ric.myapplication.backend.util.ChannelUtil;
+import com.example.ric.myapplication.backend.util.DatastoreUtil;
 import com.example.ric.myapplication.backend.util.Globals;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -99,7 +101,9 @@ public class OrderEndpoint {
             //USE THE COMMENTED OUT ONE JUST ABOVE
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            datastore.put(order);
+            Key key = datastore.put(order);
+            OrderEntity orderEntity1 = DatastoreUtil.readOrderEntity(key);
+            ChannelUtil.sendUpdateToAllUsers(orderEntity1);
 
         } else {
             log.info("rejected from server cause Payment ID already assigned to another order");

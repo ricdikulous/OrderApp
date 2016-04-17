@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ItkJgARlmkf-jlAF5c8AtFbi7SA\"",
+ "etag": "\"H01Z-1ikbwOw463Un2bFZHenx1g/ItkJgARlmkf-jlAF5c8AtFbi7SA\"",
  "discoveryVersion": "v1",
  "id": "menuApi:v1",
  "name": "menuApi",
