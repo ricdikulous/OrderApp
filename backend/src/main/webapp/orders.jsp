@@ -14,7 +14,8 @@
 <%
     List<OrderEntity> orderEntities = DatastoreUtil.readOrderEntities();
     Long timestamp = new Date().getTime();
-    String token = ChannelUtil.getToken("1", timestamp);
+    String channelKey = "1"+timestamp;
+    String token = ChannelUtil.getToken(channelKey);
 %>
 
 <html>
@@ -149,6 +150,7 @@
         </button>
         <script>
         var token = "<%=token%>"
+        var channelKey = "<%=channelKey%>"
         </script>
         <script src="/js/orders.js"></script>
     </body>

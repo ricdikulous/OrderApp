@@ -10,7 +10,8 @@
 
     onOpened = function() {
       connected = true;
-      console.log("onConnected!")
+      console.log("onConnected!");
+      console.log("ChannelKey: "+channelKey);
       //sendMessage();
       //updateBoard();
     };
@@ -31,7 +32,12 @@
         console.log("onColose!");
         var xhr = new XMLHttpRequest();
         xhr.open('POST', "channelclose", true);
-        xhr.send();
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send("channelKey="+channelKey);
+    }
+
+    handleClose = function(){
+        socket.close();
     }
 
 
@@ -64,5 +70,8 @@ channel = new goog.appengine.Channel(token);
         console.log(listContent);
         $(listContent).prependTo("#receivedList");
     }
+
+
+    window.onbeforeunload = handleClose;
 
 

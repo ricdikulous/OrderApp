@@ -20,9 +20,8 @@ import java.util.logging.Logger;
  * Created by ric on 15/04/16.
  */
 public class ChannelUtil {
-    public static String getToken(String userId, Long timestamp) {
+    public static String getToken(String channelKey) {
         ChannelService channelService = ChannelServiceFactory.getChannelService();
-        String channelKey = userId+timestamp;
         DatastoreUtil.saveChannelKey(channelKey);
         return channelService.createChannel(channelKey);
     }

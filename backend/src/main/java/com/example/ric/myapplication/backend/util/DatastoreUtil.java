@@ -31,7 +31,11 @@ public class DatastoreUtil {
         List<String> keys;
         try {
             entity = datastore.get(KeyFactory.createKey(DatastoreContract.ChannelKeysEntry.KIND, DatastoreContract.ChannelKeysEntry.KEY));
-            keys = (List) entity.getProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS);
+            if(entity.getProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS) != null) {
+                keys = (List) entity.getProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS);
+            } else {
+                keys = new ArrayList<>();
+            }
         } catch (EntityNotFoundException e) {
             //e.printStackTrace();
             entity = new Entity(DatastoreContract.ChannelKeysEntry.KIND, DatastoreContract.ChannelKeysEntry.KEY);
@@ -53,6 +57,21 @@ public class DatastoreUtil {
             e.printStackTrace();
         }
         return keys;
+    }
+
+    public static void deleteChannelKey(String channelKey) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        try {
+            Entity entity = datastore.get(KeyFactory.createKey(DatastoreContract.ChannelKeysEntry.KIND, DatastoreContract.ChannelKeysEntry.KEY));
+            if(entity.getProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS) != null) {
+                List<String> keys = (List) entity.getProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS);
+                keys.remove(channelKey);
+                entity.setProperty(DatastoreContract.ChannelKeysEntry.COLUMN_NAME_KEYS, keys);
+                datastore.put(entity);
+            }
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static HashMap<Long, String> readMenuTypes(){
