@@ -148,6 +148,7 @@ public class DatastoreUtil {
         OrderItemEntity orderItem = new OrderItemEntity();
         orderItem.setAmount(((Long) entity.getProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_AMOUNT)).intValue());
         orderItem.setMenuItemKeyString(KeyFactory.keyToString((Key) entity.getProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_ITEM_KEY)));
+        orderItem.setName((String) entity.getProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_NAME));
         if(entity.getProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED) != null) {
             orderItem.setIngredientsExcluded((List<String>) entity.getProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED));
         }

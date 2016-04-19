@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"H01Z-1ikbwOw463Un2bFZHenx1g/dPDhJxTDlcO89tCdZ5WMw6kLWn4\"",
+ "etag": "\"H01Z-1ikbwOw463Un2bFZHenx1g/tz8dsSbQFLHbRKHEyh0oCT1e37A\"",
  "discoveryVersion": "v1",
  "id": "orderApi:v1",
  "name": "orderApi",
@@ -105,6 +105,18 @@
     }
    }
   },
+  "OrderEntityCollection": {
+   "id": "OrderEntityCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "OrderEntity"
+     }
+    }
+   }
+  },
   "OrderItemEntity": {
    "id": "OrderItemEntity",
    "type": "object",
@@ -138,6 +150,17 @@
   }
  },
  "methods": {
+  "getOrders": {
+   "id": "orderApi.getOrders",
+   "path": "orderentitycollection",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "OrderEntityCollection"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "putOrder": {
    "id": "orderApi.putOrder",
    "path": "putOrder",

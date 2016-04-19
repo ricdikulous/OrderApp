@@ -19,9 +19,15 @@ public class ChannelCloseServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String channelKey = req.getParameter("channelKey");
+        Boolean makeNew = Boolean.valueOf(req.getParameter("makeNew"));
         Logger log = Logger.getLogger("Channel CLose");
         log.setLevel(Level.INFO);
-        log.info(channelKey);
+        log.info(channelKey+" "+makeNew);
         DatastoreUtil.deleteChannelKey(channelKey);
+        if(makeNew) {
+            String newKey = req.getParameter("newKey");
+            String newToken = ChannelUtil.getToken(newKey);
+            resp.getWriter().print(newToken);
+        }
     }
 }

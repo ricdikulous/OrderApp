@@ -1,5 +1,6 @@
 package com.example.ric.myapplication.backend.api;
 
+import com.example.ric.myapplication.backend.model.MenuItemEntity;
 import com.example.ric.myapplication.backend.gcm.GcmSender;
 import com.example.ric.myapplication.backend.model.DatastoreContract;
 import com.example.ric.myapplication.backend.model.OrderItemEntity;
@@ -63,12 +64,21 @@ public class OrderEndpoint {
             List<EmbeddedEntity> orderItems = new ArrayList<>();
             for (OrderItemEntity orderItemEntity : orderEntity.getOrderItemEntities()) {
                 EmbeddedEntity orderItem = new EmbeddedEntity();
-                orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_AMOUNT, orderItemEntity.getAmount());
-                orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_ITEM_KEY, KeyFactory.stringToKey(orderItemEntity.getMenuItemKeyString()));
-                if (orderItemEntity.getIngredientsExcluded() != null) {
-                    orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED, orderItemEntity.getIngredientsExcluded());
+                MenuItemEntity menuItemEntity = DatastoreUtil.readMenuItemEntity(orderItemEntity.getMenuItemKeyString());
+                if(menuItemEntity != null) {
+                    orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_NAME, menuItemEntity.getName());
+                    orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_AMOUNT, orderItemEntity.getAmount());
+                    orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_ITEM_KEY, KeyFactory.stringToKey(orderItemEntity.getMenuItemKeyString()));
+                    if (orderItemEntity.getIngredientsExcluded() != null) {
+                        orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED, orderItemEntity.getIngredientsExcluded());
+                    }
+                    orderItems.add(orderItem);
+                } else {
+                    log.info("MENU ITEM NOT FOUND");
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // ISSUE WITH ORDER CAN NOT FIND THE MENU ITEM OF THE ORDER ITEM
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 }
-                orderItems.add(orderItem);
             }
             Entity order = new Entity(DatastoreContract.OrdersEntry.KIND);
             order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ORDER_ITEMS, orderItems);
@@ -112,6 +122,11 @@ public class OrderEndpoint {
         GcmSender.sendStatus(6, orderEntity.getRegistrationToken());
 
         return orderReceipt;
+    }
+
+    @ApiMethod(name="getOrders")
+    public List<OrderEntity> getOrders(){
+        return DatastoreUtil.readOrderEntities();
     }
 
     private static boolean paymentIdAlreadyExists(String paymentId){

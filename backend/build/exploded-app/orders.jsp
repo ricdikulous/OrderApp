@@ -12,7 +12,6 @@
 
 
 <%
-    List<OrderEntity> orderEntities = DatastoreUtil.readOrderEntities();
     Long timestamp = new Date().getTime();
     String channelKey = "1"+timestamp;
     String token = ChannelUtil.getToken(channelKey);
@@ -21,11 +20,10 @@
 <html>
     <head>
         <title>Upload Test</title>
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="/_ah/channel/jsapi"></script>
-
     </head>
     <body>
         <br>
@@ -43,115 +41,36 @@
                     <div role="tabpanel" class="tab-pane active" id="received">
                         <br>
                         <ul class="list-group" id="receivedList">
-                        <% for(OrderEntity orderEntity:orderEntities){ %>
-                            <%
-                                if(orderEntity.getStatus().equals(Globals.ORDER_RECEIVED)){
-                            %>
-                                <li  class="list-group-item">
-                                    <h4 class="list-group-item-heading">Order 123432</h4>
-                                    <ul class="list-group">
-                                <%
-                                    for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                                        MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                                %>
-                                        <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                                <%
-                                    }
-                                %>
-                                    </ul>
-
-                                </li>
-                            <%
-                                }
-                            %>
-                        <% } %>
                         </ul>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="preparing">
-                    <br>
-                    <% for(OrderEntity orderEntity:orderEntities){ %>
-                        <%
-                            if(orderEntity.getStatus().equals(Globals.ORDER_PREPARING)){
-                                for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                                    MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                         %>
-                                    <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                        <%
-                                }
-                            }
-                        %>
-                    <% } %>
+                        <br>
+                        <ul class="list-group" id="preparingList">
+                        </ul>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="cooking">
-                    <br>
-                    <% for(OrderEntity orderEntity:orderEntities){ %>
-                        <%
-                            if(orderEntity.getStatus().equals(Globals.ORDER_COOKING)){
-                                for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                                    MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                         %>
-                                    <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                        <%
-                                }
-                            }
-                        %>
-                    <% } %>
+                        <br>
+                        <ul class="list-group" id="cookingList">
+                        </ul>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="dispatched">
-                    <br>
-                    <% for(OrderEntity orderEntity:orderEntities){ %>
-                        <%
-                            if(orderEntity.getStatus().equals(Globals.ORDER_DISPATCHED)){
-                                for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                                    MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                         %>
-                                    <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                        <%
-                                }
-                            }
-                        %>
-                    <% } %>
+                        <br>
+                        <ul class="list-group" id="dispatchedList">
+                        </ul>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="completed">
-                    <br>
-                    <% for(OrderEntity orderEntity:orderEntities){ %>
-                        <%
-                            if(orderEntity.getStatus().equals(Globals.ORDER_COMPLETED)){
-                        %>
-                        <%
-                                for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                                    MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                         %>
-                                    <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                        <%
-                                }
-                            }
-                        %>
-                    <% } %>
+                        <br>
+                        <ul class="list-group" id="completedList">
+                        </ul>
                     </div>
                   </div>
-
-
-                <%=orderEntities.size()%>
-                <% for(OrderEntity orderEntity:orderEntities){ %>
-                    <%
-                        for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
-                            MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-                     %>
-                            <t:menulistitem menuItem="<%=menuItem%>" orderItem="<%=orderItem%>"/>
-                    <%
-                        }
-                    %>
-                <% } %>
             </div>
         </div>
-        <button id="sendMessage">
-            Send Message
-        </button>
         <script>
         var token = "<%=token%>"
         var channelKey = "<%=channelKey%>"
         </script>
         <script src="/js/orders.js"></script>
+        <script src="https://apis.google.com/js/client.js?onload=initEndpoints"></script>
     </body>
 </html>

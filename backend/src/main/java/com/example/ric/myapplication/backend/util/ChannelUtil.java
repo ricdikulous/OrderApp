@@ -26,7 +26,7 @@ public class ChannelUtil {
         return channelService.createChannel(channelKey);
     }
 
-    public static void sendUpdateToUser(String user) {
+    /*public static void sendUpdateToUser(String user) {
         //if (user != null) {
         ChannelService channelService = ChannelServiceFactory.getChannelService();
         String channelKey = "token";
@@ -55,7 +55,7 @@ public class ChannelUtil {
             log.info(channelKey);
             channelService.sendMessage(new ChannelMessage(channelKey, message.toString()));
         }
-    }
+    }*/
 
     public static void sendUpdateToAllUsers(OrderEntity orderEntity){
         List<String> channelKeys = DatastoreUtil.readChannelKeys();
@@ -65,13 +65,13 @@ public class ChannelUtil {
         List<JSONObject> orderItemsJsonList = new ArrayList<>();
         for(OrderItemEntity orderItem:orderEntity.getOrderItemEntities()){
             JSONObject orderItemJson = new JSONObject(orderItem);
-            MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
-            JSONObject menuItemJson = new JSONObject(menuItem);
+            /*MenuItemEntity menuItem = DatastoreUtil.readMenuItemEntity(orderItem.getMenuItemKeyString());
+            //JSONObject menuItemJson = new JSONObject(menuItem);
             try {
                 orderItemJson.put("menuItem", menuItemJson);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
             orderItemsJsonList.add(orderItemJson);
         }
         JSONArray orderItemsJson = new JSONArray(orderItemsJsonList);

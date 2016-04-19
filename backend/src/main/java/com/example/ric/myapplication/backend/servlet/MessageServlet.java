@@ -16,6 +16,6 @@ public class MessageServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         // Code to retrieve user id, check rules and update game omitted for brevity
-        ChannelUtil.sendUpdateToAllUsers();
+        //ChannelUtil.sendUpdateToAllUsers();
     }
 }
