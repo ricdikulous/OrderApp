@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Named;
+
 /**
  * Created by ric on 7/04/16.
  */
@@ -59,7 +61,7 @@ public class OrderEndpoint {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if(!paymentIdAlreadyExists(orderEntity.getPaymentId()) || true) {
-            log.info("Id does not already exist");
+            log.info("Payment Id does not already exist");
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             List<EmbeddedEntity> orderItems = new ArrayList<>();
             for (OrderItemEntity orderItemEntity : orderEntity.getOrderItemEntities()) {
@@ -127,6 +129,37 @@ public class OrderEndpoint {
     @ApiMethod(name="getOrders")
     public List<OrderEntity> getOrders(){
         return DatastoreUtil.readOrderEntities();
+    }
+
+    @ApiMethod(name="advanceStatus")
+    public OrderReceiptEntity advanceStatus(@Named("orderKeyString") String keyString, @Named("currentStatusString") String currentStatusString){
+        Logger log = Logger.getLogger("Receiving Order");
+        log.setLevel(Level.INFO);
+        long currentStatus = Long.valueOf(currentStatusString);
+        OrderReceiptEntity orderReceiptEntity = new OrderReceiptEntity();
+        orderReceiptEntity.setSuccess(false);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        try {
+            Entity entity = datastore.get(KeyFactory.stringToKey(keyString));
+            long status = (long) entity.getProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS);
+            if(status <= currentStatus) {
+                currentStatus++;
+                //currentStatus = 5;
+                entity.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, currentStatus);
+                datastore.put(entity);
+                orderReceiptEntity.setSuccess(true);
+                orderReceiptEntity.setMessage("Successfully updated");
+                ChannelUtil.sendUpdateToAllUsers(DatastoreUtil.entityToOrderEntity(entity));
+            } else {
+                orderReceiptEntity.setMessage("The status of order is higher in datastore, this request is probably old!");
+                log.warning("Request has been ignored, status is higher in datastore request is probably old!");
+            }
+        } catch (EntityNotFoundException e) {
+            orderReceiptEntity.setMessage("Could not find the order in the datastore");
+            e.printStackTrace();
+        }
+
+        return orderReceiptEntity;
     }
 
     private static boolean paymentIdAlreadyExists(String paymentId){

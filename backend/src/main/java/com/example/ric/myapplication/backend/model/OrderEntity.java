@@ -13,6 +13,15 @@ public class OrderEntity {
     String paymentId;
     Long createdAt;
     Integer status;
+    String orderKeyString;
+
+    public String getOrderKeyString() {
+        return orderKeyString;
+    }
+
+    public void setOrderKeyString(String orderKeyString) {
+        this.orderKeyString = orderKeyString;
+    }
 
     public Integer getStatus() {
         return status;

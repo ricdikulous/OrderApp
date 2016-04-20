@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"H01Z-1ikbwOw463Un2bFZHenx1g/tz8dsSbQFLHbRKHEyh0oCT1e37A\"",
+ "etag": "\"H01Z-1ikbwOw463Un2bFZHenx1g/PB58q03zFKUQSUjfqOAMuwgEg2k\"",
  "discoveryVersion": "v1",
  "id": "orderApi:v1",
  "name": "orderApi",
@@ -88,6 +88,9 @@
       "$ref": "OrderItemEntity"
      }
     },
+    "orderKeyString": {
+     "type": "string"
+    },
     "paymentId": {
      "type": "string"
     },
@@ -141,6 +144,9 @@
    "id": "OrderReceiptEntity",
    "type": "object",
    "properties": {
+    "message": {
+     "type": "string"
+    },
     "success": {
      "type": "boolean"
     }
@@ -148,6 +154,29 @@
   }
  },
  "methods": {
+  "orderApi.advanceStatus": {
+   "id": "orderApi.advanceStatus",
+   "parameters": {
+    "currentStatusString": {
+     "type": "string",
+     "required": true
+    },
+    "orderKeyString": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "orderKeyString",
+    "currentStatusString"
+   ],
+   "returns": {
+    "$ref": "OrderReceiptEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "orderApi.getOrders": {
    "id": "orderApi.getOrders",
    "allowGet": true,

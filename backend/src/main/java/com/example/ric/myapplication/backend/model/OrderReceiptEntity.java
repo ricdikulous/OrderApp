@@ -5,6 +5,15 @@ package com.example.ric.myapplication.backend.model;
  */
 public class OrderReceiptEntity {
     Boolean success;
+    String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     public Boolean getSuccess() {
         return success;

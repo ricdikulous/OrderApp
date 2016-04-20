@@ -104,9 +104,9 @@ public class DatastoreUtil {
         Logger log = Logger.getLogger("Read Order");
         log.setLevel(Level.INFO);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query(DatastoreContract.OrdersEntry.KIND);
-        Query.Filter statusFilter = new Query.FilterPredicate(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, Query.FilterOperator.LESS_THAN, Globals.ORDER_COMPLETED);
-        q.setFilter(statusFilter);
+        Query q = new Query(DatastoreContract.OrdersEntry.KIND).addSort(DatastoreContract.OrdersEntry.COLUMN_NAME_CREATED_AT, Query.SortDirection.ASCENDING);;
+        //Query.Filter statusFilter = new Query.FilterPredicate(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, Query.FilterOperator.LESS_THAN, Globals.ORDER_COMPLETED);
+        //q.setFilter(statusFilter);
         PreparedQuery pq = datastore.prepare(q);
         List<OrderEntity> orderEntities = new ArrayList<>();
         for (Entity result : pq.asIterable()) {
@@ -140,6 +140,7 @@ public class DatastoreUtil {
         for(EmbeddedEntity embeddedEntity:(List<EmbeddedEntity>)entity.getProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ORDER_ITEMS)){
             orderItemEntities.add(embeddedEntityToOrderItemEntity(embeddedEntity));
         }
+        orderEntity.setOrderKeyString(KeyFactory.keyToString(entity.getKey()));
         orderEntity.setOrderItemEntities(orderItemEntities);
         return orderEntity;
     }
@@ -158,7 +159,9 @@ public class DatastoreUtil {
     public static MenuItemEntity entityToMenuItemEntity(Entity entity){
         MenuItemEntity menuItem = new MenuItemEntity();
         menuItem.setName((String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_NAME));
-        menuItem.setAllergens((List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS));
+        if(entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS) != null && entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS).getClass() == List.class) {
+            menuItem.setAllergens((List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS));
+        }
         menuItem.setIngredients((List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_INGREDIENTS));
         menuItem.setType((Long) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE));
         menuItem.setDescription((String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_DESCRIPTION));

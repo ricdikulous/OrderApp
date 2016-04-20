@@ -82,6 +82,7 @@ public class ChannelUtil {
         }
         Logger log = Logger.getLogger("SendUpdate");
         log.setLevel(Level.INFO);
+        log.info("Sending update");
         for(String channelKey:channelKeys){
             log.info(channelKey);
             channelService.sendMessage(new ChannelMessage(channelKey, message.toString()));
