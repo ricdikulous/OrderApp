@@ -56,7 +56,7 @@ public class MenuTabbedActivity extends AppCompatActivity implements MenuGallery
 
         setContentView(R.layout.activity_menu_tabbed);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
 

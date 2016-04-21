@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.dikulous.ric.orderapp.MainActivity;
 import com.dikulous.ric.orderapp.R;
@@ -42,6 +43,9 @@ public class MenuDownloadService extends Service {
     protected SharedPreferences mSharedPreferences;
     private Integer mMenuVersion;
 
+    private int mAttempts = 0;
+
+
 
     public MenuDownloadService() {
     }
@@ -59,14 +63,24 @@ public class MenuDownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startForeground(Globals.NOTIFICATION_MENU_DOWNLOAD, makeNotification());
 
         //SO IT DOWNLOADS EVERY TIME
+        Toast.makeText(this,"TOASTY", Toast.LENGTH_LONG);
         mSharedPreferences.edit().putInt(Globals.EXTRA_MENU_VERSION, 0).apply();
+        Log.i(TAG, "EXTRA_IS_DOWNLOADING "+ mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false));
+        if(!mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false)) {
+            startDownload();
+        } else {
+            Log.i(TAG, "stopself: "+startId);
+            //stopSelf(startId);
+        }
+        return START_STICKY;
+    }
 
+    private void startDownload(){
+        startForeground(Globals.NOTIFICATION_MENU_DOWNLOAD, makeNotification());
         mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, true).apply();
         new GetMenuVersionAsync().execute(this);
-        return START_STICKY;
     }
 
     @Override
@@ -74,77 +88,108 @@ public class MenuDownloadService extends Service {
         return null;
     }
 
-    protected class GetMenuVersionAsync extends AsyncTask<Context, Void, Integer> {
+    protected class GetMenuVersionAsync extends AsyncTask<Context, Void, Boolean> {
         Context mContext;
         @Override
-        protected Integer doInBackground(Context... params) {
+        protected Boolean doInBackground(Context... params) {
             mContext = params[0];
             try {
                 MenuVersionEntity menuVersionEntity = mMenuApi.getMenuVersion().execute();
                 mMenuVersion = menuVersionEntity.getVersion();
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return 0;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Integer result) {
-            if(mMenuVersion != mSharedPreferences.getInt(Globals.EXTRA_MENU_VERSION, 0)){
+        protected void onPostExecute(Boolean successful) {
+            if(successful && mMenuVersion != mSharedPreferences.getInt(Globals.EXTRA_MENU_VERSION, 0)) {
+                mAttempts = 0;
                 mDbHelper.deleteAllMenuItems();
                 mDbHelper.deleteAllMenuTypes();
                 new GetMenuTypesAsync().execute(mContext);
+            } else if(!successful){
+                if(mAttempts < 5) {
+                    mAttempts++;
+                    new GetMenuVersionAsync().execute(mContext);
+                } else {
+                    Log.e(TAG, "error downloading menu Version");
+                    downloadFinished(false);
+                }
             } else {
-                stopSelf();
+                Log.i(TAG, "Version matches current, no need for further action");
+                downloadFinished(true);
             }
         }
     }
 
-    protected class GetMenuTypesAsync extends AsyncTask<Context, Void, Integer> {
+    protected class GetMenuTypesAsync extends AsyncTask<Context, Void, Boolean> {
         private Context mContext;
 
         @Override
-        protected Integer doInBackground(Context... params) {
+        protected Boolean doInBackground(Context... params) {
             mContext = params[0];
             try {
                 MenuTypesEntity menuTypes = mMenuApi.getMenuTypes().execute();
                 mMenuTypesEntity = menuTypes;
                 Log.i(TAG, "Got menu types: " + menuTypes.getMenuTypes().toString());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return 0;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Integer result) {
-            mDbHelper.insertMenuTypes(mMenuTypesEntity);
-            new GetMenuItemsAsync().execute(mContext);
+        protected void onPostExecute(Boolean successful) {
+            if(successful) {
+                mDbHelper.deleteAllMenuTypes();
+                mDbHelper.insertMenuTypes(mMenuTypesEntity);
+                mAttempts = 0;
+                new GetMenuItemsAsync().execute(mContext);
+            } else if(mAttempts < 5){
+                mAttempts++;
+                new GetMenuTypesAsync().execute(mContext);
+            } else {
+                Log.e(TAG, "Error downloading menu Types");
+                downloadFinished(false);
+            }
         }
     }
 
-    protected class GetMenuItemsAsync extends AsyncTask<Context, Void, Integer> {
+    protected class GetMenuItemsAsync extends AsyncTask<Context, Void, Boolean> {
         private Context mContext;
 
         @Override
-        protected Integer doInBackground(Context... params) {
+        protected Boolean doInBackground(Context... params) {
             mContext = params[0];
             try {
                 MenuItemEntityCollection menuItems = mMenuApi.getMenuItems().execute();
                 mMenuItems = menuItems.getItems();
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return 0;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Integer result) {
-            mDbHelper.insertMenuItems(mMenuItems);
-            mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
-            mSharedPreferences.edit().putInt(Globals.EXTRA_MENU_VERSION, mMenuVersion).apply();
-            broadcastDownloadFinished();
-            stopSelf();
+        protected void onPostExecute(Boolean successful) {
+            if(successful) {
+                mAttempts = 0;
+                mDbHelper.deleteAllMenuItems();
+                mDbHelper.insertMenuItems(mMenuItems);
+                mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
+                mSharedPreferences.edit().putInt(Globals.EXTRA_MENU_VERSION, mMenuVersion).apply();
+                downloadFinished(true);
+            } else if(mAttempts < 5){
+                new GetMenuItemsAsync().execute(mContext);
+            } else {
+                Log.e(TAG, "Error downloading menu Items");
+                downloadFinished(false);
+            }
         }
     }
 
@@ -152,8 +197,6 @@ public class MenuDownloadService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "download service being destroyed");
-        stopForeground(true);
-        mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
         super.onDestroy();
     }
 
@@ -174,6 +217,14 @@ public class MenuDownloadService extends Service {
         notificationBuilder.setContentIntent(resultPendingIntent);
 
         return notificationBuilder.build();
+    }
+
+    private void downloadFinished(boolean successful){
+        mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
+        broadcastDownloadFinished();
+        stopForeground(true);
+        Log.i(TAG, "Successful? "+successful);
+        stopSelf();
     }
 
     private void broadcastDownloadFinished() {

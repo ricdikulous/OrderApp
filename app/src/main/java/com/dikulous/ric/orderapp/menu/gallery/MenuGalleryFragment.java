@@ -39,6 +39,7 @@ import java.util.List;
 public class MenuGalleryFragment extends Fragment {
 
     private static final String TYPE_FK = "typeFk";
+    private static final String TAG = "gallery fragment";
 
     private long mTypeFk;
 
@@ -79,6 +80,8 @@ public class MenuGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTypeFk = getArguments().getLong(TYPE_FK);
+        } else {
+            Log.e(TAG, "Arguments Null");
         }
         mMenuItems = new ArrayList<>();
         mDbHelper = new MenuDbHelper(getContext());
@@ -94,7 +97,7 @@ public class MenuGalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_menu_gallery, container, false);
         TextView position = (TextView) view.findViewById(R.id.position);
-        position.setText("type is : "+mTypeFk);
+        position.setText("type is : " + mTypeFk);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.menu_list);
         mMenuSpinner = (ProgressBar) view.findViewById(R.id.menu_spinner);

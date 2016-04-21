@@ -11,20 +11,41 @@
         android:src="@drawable/fresh"
         android:scaleType="centerCrop"/>
 
-        <Button
-            android:id="@+id/create_new_order"
+    <Button
+        android:id="@+id/create_new_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:hint="@string/create_new_order"
+        android:layout_marginBottom="15dp"
+        android:onClick="handleCreateNewOrderButtonClick"/>
+    <Button
+        android:id="@+id/continue_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/create_new_order"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/continue_order"
+        android:onClick="handleContinueOrderButtonClick"/>
+    <RelativeLayout
+        android:id="@+id/menu_download_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/continue_order"
+        >
+        <TextView
+            android:id="@+id/menu_download_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:hint="@string/create_new_order"
-            android:layout_marginBottom="15dp"
-            android:onClick="handleCreateNewOrderButtonClick"/>
-        <Button
-            android:id="@+id/continue_order"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/create_new_order"
             android:layout_centerHorizontal="true"
-            android:hint="@string/continue_order"
-            android:onClick="handleContinueOrderButtonClick"/>
+            android:layout_centerVertical="true"
+            android:text="@string/menu_download"
+            />
+        <ProgressBar
+            android:id="@+id/menu_download_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/menu_download_text"
+            />
+    </RelativeLayout>
 </RelativeLayout>

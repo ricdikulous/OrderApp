@@ -16,4 +16,5 @@
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="gcm_senderId">542222206441</string>
+    <string name="menu_download">Downloading menu...</string>
 </resources>

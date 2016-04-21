@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.dikulous.ric.orderapp.db.MenuDbHelper;
 import com.dikulous.ric.orderapp.db.OrderDbHelper;
@@ -28,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private OrderDbHelper mOrderDbHelper;
     private Button mCreateNewOrderButton;
     private Button mContinueOrderButton;
+    private RelativeLayout mMenuDownloadInfo;
     private SharedPreferences mSharedPreferences;
+    private boolean mStartedDownload;
     private static  final String TAG = "Main act";
 
     @Override
@@ -37,17 +41,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        //mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
 
         mCreateNewOrderButton = (Button) findViewById(R.id.create_new_order);
         mContinueOrderButton = (Button) findViewById(R.id.continue_order);
-
-        Intent intent = new Intent(this, MenuDownloadService.class);
-        startService(intent);
+        mMenuDownloadInfo = (RelativeLayout) findViewById(R.id.menu_download_info);
 
         if(checkPlayServices()) {
             Intent gcmIntent = new Intent(this, RegistrationIntentService.class);
             startService(gcmIntent);
         }
+        Intent intent = new Intent(this, MenuDownloadService.class);
+        startService(intent);
+        mStartedDownload = true;
+
+        mCreateNewOrderButton.setEnabled(false);
+        mContinueOrderButton.setEnabled(false);
+        mMenuDownloadInfo.setVisibility(View.VISIBLE);
         //new MenuDbHelper(this).deleteAllMenuItems();
         mOrderDbHelper = new OrderDbHelper(this);
 
@@ -56,12 +66,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        if(mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false)) {
+        if(mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false) || mStartedDownload) {
+            Log.i(TAG, "Is downloading!| mStartedDownload: "+mStartedDownload);
             mCreateNewOrderButton.setEnabled(false);
             mContinueOrderButton.setEnabled(false);
+            mMenuDownloadInfo.setVisibility(View.VISIBLE);
+        } else {
+            mCreateNewOrderButton.setEnabled(true);
+            mContinueOrderButton.setEnabled(true);
+            mMenuDownloadInfo.setVisibility(View.GONE);
         }
+        mStartedDownload = false;
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter(Globals.INTENT_DOWNLOAD_FINISHED));
+
     }
 
     @Override
@@ -94,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             if(intent.getAction().equals(Globals.INTENT_DOWNLOAD_FINISHED)){
                 mCreateNewOrderButton.setEnabled(true);
                 mContinueOrderButton.setEnabled(true);
+                mMenuDownloadInfo.setVisibility(View.GONE);
             }
         }
     };
