@@ -135,7 +135,7 @@ public class OrderEndpoint {
     public OrderReceiptEntity advanceStatus(@Named("orderKeyString") String keyString, @Named("currentStatusString") String currentStatusString){
         Logger log = Logger.getLogger("Receiving Order");
         log.setLevel(Level.INFO);
-        long currentStatus = Long.valueOf(currentStatusString);
+        Long currentStatus = Long.valueOf(currentStatusString);
         OrderReceiptEntity orderReceiptEntity = new OrderReceiptEntity();
         orderReceiptEntity.setSuccess(false);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -144,12 +144,14 @@ public class OrderEndpoint {
             long status = (long) entity.getProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS);
             if(status <= currentStatus) {
                 currentStatus++;
-                //currentStatus = 5;
+                //currentStatus = 5L;
                 entity.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, currentStatus);
                 datastore.put(entity);
                 orderReceiptEntity.setSuccess(true);
                 orderReceiptEntity.setMessage("Successfully updated");
                 ChannelUtil.sendUpdateToAllUsers(DatastoreUtil.entityToOrderEntity(entity));
+                GcmSender.sendStatus(currentStatus.intValue(), (String)entity.getProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_REGISTRATION_TOKEN));
+
             } else {
                 orderReceiptEntity.setMessage("The status of order is higher in datastore, this request is probably old!");
                 log.warning("Request has been ignored, status is higher in datastore request is probably old!");

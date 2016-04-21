@@ -81,9 +81,11 @@
             listContent+= '<a href="#"  class="list-group-item">'+
                                 '<h4 class="list-group-item-heading">'+order.orderItemEntities[i].name+'</h4>'+
                                 '<p class="list-group-item-text">'+
-                                    'Amount: '+order.orderItemEntities[i].amount+'<br>'+
-                                '</p>'+
-                           '</a>'
+                                'Amount: '+order.orderItemEntities[i].amount+'<br>';
+            if(order.orderItemEntities[i].ingredientsExcluded != undefined){
+                listContent += getIngredientsExcludedList(order.orderItemEntities[i].ingredientsExcluded);
+            }
+            listContent+= '</p></a>';
         }
         listContent += '</ul><button class="btn btn-default advance-status-button" data-key="'+order.orderKeyString+'" data-status="'+order.status+'">Advance</button>'+
                 '<div id="loading-div-'+order.orderKeyString+'" hidden ><img src="http://smallenvelop.com/wp-content/uploads/2014/08/Preloader_8.gif"> Sending status update... </div></li>'
@@ -109,12 +111,22 @@
         updateBadges();
     }
 
+    function getIngredientsExcludedList(ingredientsExcluded){
+        var html = '<b>Ingredient Excluded: '
+        for(var i=0;i<ingredientsExcluded.length;i++){
+            html += ingredientsExcluded[i]+", ";
+        }
+        html = html.replace(/,\s*$/, "");
+        html += '</b><br>';
+        return html;
+    }
+
     function updateBadges(){
         var received = 0;
-        var preparing = "";
-        var cooking = "";
-        var dispatched = "";
-        var completed = "";
+        var preparing = 0;
+        var cooking = 0;
+        var dispatched = 0;
+        var completed = 0;
         console.log(orders);
         for (var property in orders) {
             console.log(property);
