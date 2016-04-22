@@ -17,6 +17,7 @@ import com.dikulous.ric.orderapp.menu.MenuAbstractActivity;
 import com.dikulous.ric.orderapp.model.OrderItem;
 import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntity;
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
 
 import java.util.List;
 
@@ -64,10 +65,10 @@ public class MenuItemDetailsActivity extends MenuAbstractActivity {
         mNumberPicker.setMinValue(1);
         mNumberPicker.setMaxValue(10);
 
+
         mAddToOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "BUtton clicked");
                 mAddToOrderLayout.setVisibility(View.GONE);
                 mAddedToOrderLayout.setVisibility(View.VISIBLE);
                 List<String> ingredientsExcluded = mAdapter.getIngredientsExcluded();
@@ -78,6 +79,7 @@ public class MenuItemDetailsActivity extends MenuAbstractActivity {
                 orderItem.setMenuItemFk(mMenuItemPk);
                 orderItem.setAmount(mNumberPicker.getValue());
                 mOrderDbHelper.insertOrderItem(orderItem);
+                updateCartCount();
             }
         });
 

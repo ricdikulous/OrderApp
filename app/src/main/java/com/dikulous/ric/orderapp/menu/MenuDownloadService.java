@@ -31,6 +31,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class MenuDownloadService extends Service {
@@ -80,6 +81,7 @@ public class MenuDownloadService extends Service {
     private void startDownload(){
         startForeground(Globals.NOTIFICATION_MENU_DOWNLOAD, makeNotification());
         mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, true).apply();
+        mSharedPreferences.edit().putLong(Globals.EXTRA_DOWNLOAD_STARTED, new Date().getTime()).apply();
         new GetMenuVersionAsync().execute(this);
     }
 

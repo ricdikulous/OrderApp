@@ -23,12 +23,13 @@ import android.widget.TextView;
 
 import com.dikulous.ric.orderapp.R;
 import com.dikulous.ric.orderapp.db.MenuDbHelper;
+import com.dikulous.ric.orderapp.menu.MenuAbstractActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-public class MenuTabbedActivity extends AppCompatActivity implements MenuGalleryFragment.OnFragmentInteractionListener{
+public class MenuTabbedActivity extends MenuAbstractActivity implements MenuGalleryFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "Tabbed";
     /**
@@ -74,27 +75,6 @@ public class MenuTabbedActivity extends AppCompatActivity implements MenuGallery
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_menu_tabbed, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {

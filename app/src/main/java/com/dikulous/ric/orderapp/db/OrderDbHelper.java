@@ -199,6 +199,35 @@ public class OrderDbHelper extends MenuDbHelper {
         return orderItemEntities;
     }
 
+    public int readNumberOrderItems() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        long orderFk = this.readCurrentOrderPk();
+        String[] projection = {
+                MenuContract.OrderItemEntry._ID,
+                MenuContract.OrderItemEntry.COLUMN_NAME_AMOUNT,
+        };
+
+        String selection = MenuContract.OrderItemEntry.COLUMN_NAME_ORDER_FK+"= ?";
+        String[] selectionArgs = {String.valueOf(orderFk)};
+        Cursor cursor = db.query(
+                MenuContract.OrderItemEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+
+        int count = 0;
+        if(cursor != null){
+            while (cursor.moveToNext()){
+                count += cursor.getInt(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_AMOUNT));
+            }
+        }
+        return count;
+    }
+
     public OrderEntity readOrderEntity(){
 
         SQLiteDatabase db = this.getReadableDatabase();

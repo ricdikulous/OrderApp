@@ -25,6 +25,8 @@ import com.dikulous.ric.orderapp.util.Globals;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
     private OrderDbHelper mOrderDbHelper;
@@ -66,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        //If it has been downloading for over 1 minute it is probably stuck and not actually downloading
+        if(mSharedPreferences.getLong(Globals.EXTRA_DOWNLOAD_STARTED, 0) < new Date().getTime()-60000){
+            mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
+        }
         if(mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false) || mStartedDownload) {
             Log.i(TAG, "Is downloading!| mStartedDownload: "+mStartedDownload);
             mCreateNewOrderButton.setEnabled(false);
