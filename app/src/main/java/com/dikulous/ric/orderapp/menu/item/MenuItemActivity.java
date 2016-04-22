@@ -76,11 +76,14 @@ public class MenuItemActivity extends MenuAbstractActivity{
         Glide.with(this).load(mMenuItem.getServingUrl()).asGif().crossFade().into(mFoodImage);
 
         String priceString = getResources().getString(R.string.price);
-        String ingredientsString = mMenuItem.getIngredients().toString();
-        mIngredients.setText("Ingredients "+ingredientsString);
+        String ingredientsString = mMenuItem.getIngredients().toString().replaceAll("\\[|\\]", "").trim();
+        mIngredients.setText("Ingredients: "+ingredientsString);
         if(mMenuItem.getAllergens() !=null){
-            mAllergens.setText("Allergens: "+ mMenuItem.getAllergens().toString());
-            mAllergens.setVisibility(View.VISIBLE);
+            String allergensString = mMenuItem.getAllergens().toString().replaceAll("\\[|\\]", "").trim();
+            if(allergensString.length()>0) {
+                mAllergens.setText("Allergens: " + allergensString);
+                mAllergens.setVisibility(View.VISIBLE);
+            }
         }
         priceString = String.format(priceString, CurrencyUtil.longCentsToBigDecimal(mMenuItem.getPrice()));
         mPrice.setText(priceString);

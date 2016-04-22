@@ -59,10 +59,11 @@
         <activity android:name=".CreateOrderActivity" />
         <activity android:name=".OrderPlacedActivity" />
         <activity android:name=".menu.gallery.MenuGalleryActivity" />
-        <activity android:name=".menu.item.MenuItemActivity">
+        <activity android:name=".menu.item.MenuItemActivity"
+                  android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dikulous.ric.orderapp.menu.gallery.MenuGalleryActivity" />
+                android:value="com.dikulous.ric.orderapp.menu.gallery.MenuTabbedActivity" />
         </activity>
         <activity android:name=".order.OrderActivity" />
         <activity
@@ -76,7 +77,11 @@
             android:exported="true" />
 
         <activity android:name=".order.monitor.MonitorOrderActivity" />
-        <activity android:name=".menu.item.MenuItemDetailsActivity"></activity>
+        <activity android:name=".menu.item.MenuItemDetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dikulous.ric.orderapp.menu.item.MenuItemActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -13,13 +13,14 @@ import android.widget.RelativeLayout;
 import com.dikulous.ric.orderapp.R;
 import com.dikulous.ric.orderapp.db.MenuDbHelper;
 import com.dikulous.ric.orderapp.db.OrderDbHelper;
+import com.dikulous.ric.orderapp.menu.MenuAbstractActivity;
 import com.dikulous.ric.orderapp.model.OrderItem;
 import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntity;
 
 import java.util.List;
 
-public class MenuItemDetailsActivity extends AppCompatActivity {
+public class MenuItemDetailsActivity extends MenuAbstractActivity {
 
     private static final String TAG = "Menu Item Details";
     private long mMenuItemPk;
