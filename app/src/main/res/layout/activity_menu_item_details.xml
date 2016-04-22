@@ -1,9 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.dikulous.ric.orderapp.menu.item.MenuItemDetailsFragment"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.dikulous.ric.orderapp.menu.item.MenuItemDetailsActivity"
     android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
@@ -12,10 +16,17 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         />
+    <EditText
+        android:id="@+id/special_request_edit_text"
+        android:hint="Special request"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ingredients_list"/>
     <RelativeLayout
+        android:id="@+id/add_to_order_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ingredients_list">
+        android:layout_below="@id/special_request_edit_text">
         <TextView
             android:id="@+id/select_amount"
             android:layout_width="wrap_content"
@@ -37,6 +48,16 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/number_picker"
             />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/added_to_order_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/special_request_edit_text"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.dikulous.ric.orderapp.menu.item;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +30,7 @@ import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntity;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntityCollection;
 
-public class MenuItemActivity extends MenuAbstractActivity implements MenuItemDetailsFragment.OnFragmentInteractionListener, MenuItemDescriptionFragment.OnDescriptionFragmentInteractionListener{
+public class MenuItemActivity extends MenuAbstractActivity{
 
     private static final String TAG = "Menu Item Act";
 
@@ -61,20 +62,20 @@ public class MenuItemActivity extends MenuAbstractActivity implements MenuItemDe
         mMenuItem = mDbHelper.readMenuItemByPk(mMenuItemPk);
 
         mFoodImage = (ImageView) findViewById(R.id.food_image);
-        /*mFoodName = (TextView) findViewById(R.id.food_name);
+        mFoodName = (TextView) findViewById(R.id.food_name);
         mDescription = (TextView) findViewById(R.id.description);
         mPrice = (TextView) findViewById(R.id.price);
         mIngredients = (TextView) findViewById(R.id.ingredients);
         mAllergens = (TextView) findViewById(R.id.allergens);
-        mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
-        mSelectAmount = (TextView) findViewById(R.id.select_amount);
-        mAddToOrderButton = (Button) findViewById(R.id.add_to_order_button);
+        //mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
+        //mSelectAmount = (TextView) findViewById(R.id.select_amount);
+        //mAddToOrderButton = (Button) findViewById(R.id.add_to_order_button);
 
         mFoodName.setText(mMenuItem.getName());
-        mDescription.setText(mMenuItem.getDescription());*/
+        mDescription.setText(mMenuItem.getDescription());
         Glide.with(this).load(mMenuItem.getServingUrl()).asGif().crossFade().into(mFoodImage);
 
-        /*String priceString = getResources().getString(R.string.price);
+        String priceString = getResources().getString(R.string.price);
         String ingredientsString = mMenuItem.getIngredients().toString();
         mIngredients.setText("Ingredients "+ingredientsString);
         if(mMenuItem.getAllergens() !=null){
@@ -83,27 +84,12 @@ public class MenuItemActivity extends MenuAbstractActivity implements MenuItemDe
         }
         priceString = String.format(priceString, CurrencyUtil.longCentsToBigDecimal(mMenuItem.getPrice()));
         mPrice.setText(priceString);
-        mNumberPicker.setMinValue(1);
-        mNumberPicker.setMaxValue(10);*/
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment detailsFragment = MenuItemDescriptionFragment.newInstance(mMenuItemPk);
-        fragmentTransaction.add(R.id.fragment_container, detailsFragment);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.commit();
     }
 
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.i(TAG, "fragment interaction");
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment detailsFragment = MenuItemDetailsFragment.newInstance(mMenuItemPk);
-        fragmentTransaction.replace(R.id.fragment_container, detailsFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.commit();
+    public void handleMenuItemSelect(View view){
+        Intent intent = new Intent(this, MenuItemDetailsActivity.class);
+        intent.putExtra(Globals.EXTRA_MENU_PK, mMenuItemPk);
+        startActivity(intent);
     }
+
 }
