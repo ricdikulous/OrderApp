@@ -126,6 +126,28 @@ public class OrderDbHelper extends MenuDbHelper {
         return count;
     }
 
+    public int updateAmount(OrderItem orderItem, int amount) {
+        if(amount>=0) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(MenuContract.OrderItemEntry.COLUMN_NAME_AMOUNT, amount);
+
+            String selection = MenuContract.OrderItemEntry._ID + " = ? ";
+            String[] selectionArgs = {String.valueOf(orderItem.getPk())};
+
+            int count = db.update(
+                    MenuContract.OrderItemEntry.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs
+            );
+            Log.i(TAG, "Update order item amount to : " + amount + " of " + count + " orders");
+            return count;
+        }
+        return 0;
+    }
+
     public Long readCurrentOrderPk() {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] projection = {
@@ -301,6 +323,7 @@ public class OrderDbHelper extends MenuDbHelper {
     private OrderItem cursorToOrderItem(Cursor cursor) {
         OrderItem orderItem = new OrderItem();
         Gson gson = new Gson();
+        orderItem.setPk(cursor.getLong(cursor.getColumnIndex(MenuContract.OrderItemEntry._ID)));
         orderItem.setOrderFk(cursor.getLong(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_ORDER_FK)));
         orderItem.setMenuItemFk(cursor.getLong(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_MENU_ITEM_FK)));
         orderItem.setAmount(cursor.getInt(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_AMOUNT)));

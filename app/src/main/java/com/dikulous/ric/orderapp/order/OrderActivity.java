@@ -55,8 +55,6 @@ public class OrderActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
 
-    private BigDecimal mTotalPrice;
-
     private SharedPreferences mSharedPreferences;
 
     private static PayPalConfiguration config = new PayPalConfiguration()
@@ -79,17 +77,18 @@ public class OrderActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.order_list);
         mTotalPriceTextView = (TextView) findViewById(R.id.total);
 
-        mAdapter = new OrderItemsAdapter(this, mOrderDbHelper.readCurrentOrderItems());
+        mAdapter = new OrderItemsAdapter(this, mOrderDbHelper.readCurrentOrderItems(), mTotalPriceTextView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("Submitting");
         mProgressDialog.setMessage("Sending order...");
         mProgressDialog.setCancelable(false);
 
-        setTotalPrice();
+        mTotalPriceTextView.setText("Total: $" + calculateTotal());
 
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -97,14 +96,14 @@ public class OrderActivity extends AppCompatActivity {
 
     }
 
-    private void setTotalPrice() {
+
+    private BigDecimal calculateTotal(){
         long total = 0;
         for(OrderItem orderItem:mOrderDbHelper.readCurrentOrderItems()){
             long price = mMenuDbHelper.readMenuItemByPk(orderItem.getMenuItemFk()).getPrice();
             total += orderItem.getAmount()*price;
         }
-        mTotalPrice = CurrencyUtil.longCentsToBigDecimal(total);
-        mTotalPriceTextView.setText("Total: $" + mTotalPrice);
+        return CurrencyUtil.longCentsToBigDecimal(total);
     }
 
     public void handleSubmitOrderButton(View view){
@@ -116,7 +115,7 @@ public class OrderActivity extends AppCompatActivity {
         //   - PAYMENT_INTENT_ORDER to create a payment for authorization and capture
         //     later via calls from your server.
 
-        PayPalPayment payment = new PayPalPayment(mTotalPrice, "AUD", "Order",
+        PayPalPayment payment = new PayPalPayment(calculateTotal(), "AUD", "Order",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(this, PaymentActivity.class);

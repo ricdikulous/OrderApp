@@ -6,11 +6,20 @@ import java.util.List;
  * Created by ric on 31/03/16.
  */
 public class OrderItem {
+    Long pk;
     Long orderFk;
     Long menuItemFk;
     int amount;
     String menuItemKeyString;
     List<String> ingredientsExcluded;
+
+    public Long getPk() {
+        return pk;
+    }
+
+    public void setPk(Long pk) {
+        this.pk = pk;
+    }
 
     public String getMenuItemKeyString() {
         return menuItemKeyString;

@@ -13,7 +13,6 @@
             android:layout_height="wrap_content"
             android:background="@color/imageTextBackground"
             android:textColor="@color/imageText"
-            android:text="heheh Menu ITEM This is big item"
             android:textSize="20sp"
             android:layout_alignParentBottom="true"/>
 </RelativeLayout>
