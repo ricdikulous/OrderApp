@@ -303,6 +303,14 @@ public class OrderDbHelper extends MenuDbHelper {
         return status;
     }
 
+    public long deleteOrderItemsWithZeroAmount() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = MenuContract.OrderItemEntry.COLUMN_NAME_AMOUNT +" <= 0";
+        long numDeleted = db.delete(MenuContract.OrderItemEntry.TABLE_NAME, selection, null);
+        Log.i(TAG, "deleted "+numDeleted+" items with amount of 0 ");
+        return numDeleted;
+    }
+
     public long deleteCurrentOrder(){
         SQLiteDatabase db = this.getWritableDatabase();
         deleteOrderItems(this.readCurrentOrderPk());

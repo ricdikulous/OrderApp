@@ -23,12 +23,10 @@
                 android:layout_centerVertical="true"/>
             <TextView
                 android:id="@+id/amount_ticker"
-                android:text="x2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:padding="2dp"
-                android:textSize="20sp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:layout_toRightOf="@id/remove_amount"/>
             <ImageView
                 android:id="@+id/add_amount"
@@ -47,22 +45,30 @@
             android:animateLayoutChanges="true">
             <TextView
                 android:id="@+id/food_name"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 />
             <TextView
+                android:id="@+id/unit_price"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/food_name"
+                />
+            <TextView
                 android:id="@+id/sub_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_alignParentRight="true"
                 />
             <TextView
                 android:id="@+id/ingredients_excluded"
-                android:text="Ingredients Excluded: Pepperoni, tomatoes, olives, spinach, peanuts, other shit, randels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/food_name"
+                android:layout_below="@id/unit_price"
                 android:maxLines="1"
                 android:ellipsize="end"
                 />

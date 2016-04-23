@@ -23,6 +23,7 @@ import com.dikulous.ric.orderapp.db.OrderDbHelper;
 import com.dikulous.ric.orderapp.model.OrderItem;
 import com.dikulous.ric.orderapp.order.monitor.MonitorOrderActivity;
 import com.dikulous.ric.orderapp.util.CurrencyUtil;
+import com.dikulous.ric.orderapp.util.DisplayUtil;
 import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.orderApi.OrderApi;
 import com.example.ric.myapplication.backend.api.orderApi.model.OrderEntity;
@@ -88,14 +89,13 @@ public class OrderActivity extends AppCompatActivity {
         mProgressDialog.setMessage("Sending order...");
         mProgressDialog.setCancelable(false);
 
-        mTotalPriceTextView.setText("Total: $" + calculateTotal());
+        mTotalPriceTextView.setText("Total: " + DisplayUtil.bigDecimalToCurrency(calculateTotal()));
 
         Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         startService(intent);
 
     }
-
 
     private BigDecimal calculateTotal(){
         long total = 0;
@@ -161,6 +161,7 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         stopService(new Intent(this, PayPalService.class));
+        mOrderDbHelper.deleteOrderItemsWithZeroAmount();
         super.onDestroy();
     }
 

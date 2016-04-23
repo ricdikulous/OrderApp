@@ -26,6 +26,7 @@ import com.dikulous.ric.orderapp.db.OrderDbHelper;
 import com.dikulous.ric.orderapp.menu.MenuAbstractActivity;
 import com.dikulous.ric.orderapp.model.OrderItem;
 import com.dikulous.ric.orderapp.util.CurrencyUtil;
+import com.dikulous.ric.orderapp.util.DisplayUtil;
 import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntity;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntityCollection;
@@ -85,7 +86,7 @@ public class MenuItemActivity extends MenuAbstractActivity{
                 mAllergens.setVisibility(View.VISIBLE);
             }
         }
-        priceString = String.format(priceString, CurrencyUtil.longCentsToBigDecimal(mMenuItem.getPrice()));
+        priceString = String.format(priceString, DisplayUtil.longCentsToCurrency(mMenuItem.getPrice()));
         mPrice.setText(priceString);
     }
 
