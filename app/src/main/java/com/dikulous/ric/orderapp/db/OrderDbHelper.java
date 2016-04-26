@@ -250,13 +250,12 @@ public class OrderDbHelper extends MenuDbHelper {
         return count;
     }
 
-    public OrderEntity readOrderEntity(){
+    public OrderEntity readOrderEntity(long orderPk){
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        long orderFk = this.readCurrentOrderPk();
         String selection = MenuContract.OrderItemEntry._ID+"= ?";
-        String[] selectionArgs = {String.valueOf(orderFk)};
+        String[] selectionArgs = {String.valueOf(orderPk)};
         Cursor cursor = db.query(
                 MenuContract.OrderEntry.TABLE_NAME,
                 MenuContract.ORDER_PROJECTION,
@@ -273,9 +272,8 @@ public class OrderDbHelper extends MenuDbHelper {
                 orderEntity.setPaymentId(cursor.getString(cursor.getColumnIndex(MenuContract.OrderEntry.COLUMN_NAME_PAYMENT_ID)));
             }
         }
-        orderEntity.setAddress("123 fake street");
-        orderEntity.setPhoneNumber("04 1234 1234");
-        orderEntity.setRegistrationToken("4rt89ednf9839rwd");
+
+
         orderEntity.setOrderItemEntities(readCurrentOrderItemEntities());
 
         return orderEntity;

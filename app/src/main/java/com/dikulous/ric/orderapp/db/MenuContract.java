@@ -50,6 +50,19 @@ public class MenuContract {
         public static final String COLUMN_NAME_MENU_ITEM_KEY_STRING = "menuItemKeyString";
     }
 
+    public static abstract class AddressEntry implements BaseColumns{
+        public static final String TABLE_NAME = "addresses";
+        public static final String _ID = "_id";
+        public static final String COLUMN_NAME_ORDER_FK = "orderFk";
+        public static final String COLUMN_NAME_UNIT_NUMBER = "unitNumber";
+        public static final String COLUMN_NAME_STREET_NUMBER = "streetNumber";
+        public static final String COLUMN_NAME_STREET_NAME = "streetName";
+        public static final String COLUMN_NAME_SUBURB = "suburb";
+        public static final String COLUMN_NAME_POSTCODE = "postcode";
+        public static final String COLUMN_NAME_CONTACT_NUMBER = "contactNumber";
+
+    }
+
     public static final String SQL_CREATE_MENU_TYPES =
             "CREATE TABLE " + MenuTypesEntry.TABLE_NAME +
                     "(" +
@@ -95,6 +108,20 @@ public class MenuContract {
                     "FOREIGN KEY ("+OrderItemEntry.COLUMN_NAME_ORDER_FK+") REFERENCES "+ OrderEntry.TABLE_NAME+"("+OrderEntry._ID+")"
                     +")";
 
+    public static final String SQL_CREATE_ADDRESSES =
+            "CREATE TABLE " + AddressEntry.TABLE_NAME +
+                    "(" +
+                    AddressEntry._ID + " INTEGER PRIMARY KEY," +
+                    AddressEntry.COLUMN_NAME_ORDER_FK + " INTEGER NOT NULL UNIQUE,"+
+                    AddressEntry.COLUMN_NAME_UNIT_NUMBER + " TEXT,"+
+                    AddressEntry.COLUMN_NAME_STREET_NUMBER + " TEXT NOT NULL,"+
+                    AddressEntry.COLUMN_NAME_STREET_NAME + " TEXT NOT NULL,"+
+                    AddressEntry.COLUMN_NAME_SUBURB + " TEXT NOT NULL,"+
+                    AddressEntry.COLUMN_NAME_POSTCODE + " TEXT NOT NULL,"+
+                    AddressEntry.COLUMN_NAME_CONTACT_NUMBER + " TEXT NOT NULL,"+
+                    "FOREIGN KEY ("+AddressEntry.COLUMN_NAME_ORDER_FK+") REFERENCES "+ OrderEntry.TABLE_NAME+"("+OrderEntry._ID+")"
+                    +")";
+
     public static final String SQL_DELETE_MENU_TYPES =
             "DROP TABLE IF EXISTS " + MenuTypesEntry.TABLE_NAME;
 
@@ -106,6 +133,9 @@ public class MenuContract {
 
     public static final String SQL_DELETE_ORDER_ITEMS =
             "DROP TABLE IF EXISTS " + OrderItemEntry.TABLE_NAME;
+
+    public static final String SQL_DELETE_ADDRESSES =
+            "DROP TABLE IF EXISTS " + AddressEntry.TABLE_NAME;
 
     public static final String[] MENU_TYPES_PROJECTION = {
             MenuTypesEntry._ID,
@@ -139,5 +169,16 @@ public class MenuContract {
             OrderItemEntry.COLUMN_NAME_AMOUNT,
             OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED,
             OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING,
+    };
+
+    public static final String[] ADDRESS_PROJECTION = {
+            AddressEntry._ID,
+            AddressEntry.COLUMN_NAME_ORDER_FK,
+            AddressEntry.COLUMN_NAME_UNIT_NUMBER,
+            AddressEntry.COLUMN_NAME_STREET_NUMBER,
+            AddressEntry.COLUMN_NAME_STREET_NAME,
+            AddressEntry.COLUMN_NAME_SUBURB,
+            AddressEntry.COLUMN_NAME_POSTCODE,
+            AddressEntry.COLUMN_NAME_CONTACT_NUMBER
     };
 }

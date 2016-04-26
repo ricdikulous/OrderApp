@@ -28,7 +28,7 @@ public class MenuDbHelper extends SQLiteOpenHelper{
 
     public static final String TAG = "MenuDbHelper";
 
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 10;
     public static final String DATABASE_NAME = "Menu.db";
 
     public Context mContext;
@@ -43,11 +43,13 @@ public class MenuDbHelper extends SQLiteOpenHelper{
         db.execSQL(MenuContract.SQL_CREATE_MENU);
         db.execSQL(MenuContract.SQL_CREATE_ORDERS);
         db.execSQL(MenuContract.SQL_CREATE_ORDER_ITEMS);
+        db.execSQL(MenuContract.SQL_CREATE_ADDRESSES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.i(TAG, "did upgrade");
+        db.execSQL(MenuContract.SQL_DELETE_ADDRESSES);
         db.execSQL(MenuContract.SQL_DELETE_ORDER_ITEMS);
         db.execSQL(MenuContract.SQL_DELETE_ORDERS);
         db.execSQL(MenuContract.SQL_DELETE_MENU);

@@ -19,6 +19,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA-WsVaG7PDey3VWTedU_9br42ylXPnOMM"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,8 +62,9 @@
         <activity android:name=".CreateOrderActivity" />
         <activity android:name=".OrderPlacedActivity" />
         <activity android:name=".menu.gallery.MenuGalleryActivity" />
-        <activity android:name=".menu.item.MenuItemActivity"
-                  android:launchMode="singleTop">
+        <activity
+            android:name=".menu.item.MenuItemActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dikulous.ric.orderapp.menu.gallery.MenuTabbedActivity" />
@@ -82,6 +86,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dikulous.ric.orderapp.menu.item.MenuItemActivity" />
         </activity>
+        <activity android:name=".order.AddressEntryActivity"></activity>
     </application>
 
 </manifest>

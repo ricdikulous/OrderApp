@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.dikulous.ric.orderapp.db.AddressDbHelper;
 import com.dikulous.ric.orderapp.db.MenuDbHelper;
 import com.dikulous.ric.orderapp.db.OrderDbHelper;
 import com.dikulous.ric.orderapp.gcm.RegistrationIntentService;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleCreateNewOrderButtonClick(View view){
         mOrderDbHelper.deleteCurrentOrder();
+        new AddressDbHelper(this).deleteAllAddresses();
         mOrderDbHelper.insertNewOrder();
         startMenu();
     }

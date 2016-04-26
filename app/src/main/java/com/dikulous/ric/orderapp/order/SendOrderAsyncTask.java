@@ -36,7 +36,7 @@ public class SendOrderAsyncTask extends AsyncTask<Context, Void, Integer> {
 
         mContext = params[0];
         mOrderDbHelper = new OrderDbHelper(mContext);
-        OrderEntity orderEntity = mOrderDbHelper.readOrderEntity();
+        OrderEntity orderEntity = mOrderDbHelper.readOrderEntity(0);
         Log.i(TAG, "sending order");
         try {
             OrderReceiptEntity orderReceipt = mOrderApi.putOrder(orderEntity).execute();

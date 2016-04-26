@@ -17,4 +17,12 @@
 
     <string name="gcm_senderId">542222206441</string>
     <string name="menu_download">Downloading menu...</string>
+    <string name="unit_number">Unit number</string>
+    <string name="street_address">Street address</string>
+    <string name="street_number">Street number</string>
+    <string name="street">Street</string>
+    <string name="postcode">Postcode</string>
+    <string name="contact_numer">Contact number</string>
+    <string name="submit_address">Submit order</string>
+    <string name="suburb">Suburb</string>
 </resources>

@@ -91,9 +91,9 @@ public class OrderActivity extends AppCompatActivity {
 
         mTotalPriceTextView.setText("Total: " + DisplayUtil.bigDecimalToCurrency(calculateTotal()));
 
-        Intent intent = new Intent(this, PayPalService.class);
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-        startService(intent);
+        //Intent intent = new Intent(this, PayPalService.class);
+        //intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        //startService(intent);
 
     }
 
@@ -114,7 +114,7 @@ public class OrderActivity extends AppCompatActivity {
         //   - PAYMENT_INTENT_AUTHORIZE to only authorize payment and capture funds later.
         //   - PAYMENT_INTENT_ORDER to create a payment for authorization and capture
         //     later via calls from your server.
-
+        /*
         PayPalPayment payment = new PayPalPayment(calculateTotal(), "AUD", "Order",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
@@ -125,7 +125,10 @@ public class OrderActivity extends AppCompatActivity {
 
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
 
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 0);*/
+        Intent intent = new Intent(this, AddressEntryActivity.class);
+        intent.putExtra(Globals.EXTRA_ORDER_PK, mOrderPk);
+        startActivity(intent);
     }
 
     @Override
@@ -160,7 +163,7 @@ public class OrderActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        stopService(new Intent(this, PayPalService.class));
+        //stopService(new Intent(this, PayPalService.class));
         mOrderDbHelper.deleteOrderItemsWithZeroAmount();
         super.onDestroy();
     }
@@ -183,7 +186,7 @@ public class OrderActivity extends AppCompatActivity {
 
             mContext = params[0];
             mOrderDbHelper = new OrderDbHelper(mContext);
-            OrderEntity orderEntity = mOrderDbHelper.readOrderEntity();
+            OrderEntity orderEntity = mOrderDbHelper.readOrderEntity(0);
             orderEntity.setRegistrationToken(mSharedPreferences.getString(Globals.GCM_TOKEN, "no token"));
             Log.i(TAG, "sending order");
             try {
