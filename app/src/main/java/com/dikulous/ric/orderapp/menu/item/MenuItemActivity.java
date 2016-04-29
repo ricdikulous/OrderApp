@@ -1,13 +1,16 @@
 package com.dikulous.ric.orderapp.menu.item;
 
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +34,10 @@ import com.dikulous.ric.orderapp.util.Globals;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntity;
 import com.example.ric.myapplication.backend.api.menuApi.model.MenuItemEntityCollection;
 
-public class MenuItemActivity extends MenuAbstractActivity{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MenuItemActivity extends MenuAbstractActivity implements IngredientsExcludedDialog.IngredientsExcludedDialogListener{
 
     private static final String TAG = "Menu Item Act";
 
@@ -40,12 +46,17 @@ public class MenuItemActivity extends MenuAbstractActivity{
     private MenuDbHelper mDbHelper;
     private OrderDbHelper mOrderDbHelper;
 
+    private List<String> mIngredientsExcluded;
+
+    private boolean[] mDialogIngredientsSelected;
+
     private ImageView mFoodImage;
     private TextView mFoodName;
     private TextView mDescription;
     private TextView mPrice;
     private TextView mIngredients;
     private TextView mAllergens;
+    private TextView mIngredientsExcludedTextView;
     private NumberPicker mNumberPicker;
     private TextView mSelectAmount;
     private Button mAddToOrderButton;
@@ -68,17 +79,23 @@ public class MenuItemActivity extends MenuAbstractActivity{
         mPrice = (TextView) findViewById(R.id.price);
         mIngredients = (TextView) findViewById(R.id.ingredients);
         mAllergens = (TextView) findViewById(R.id.allergens);
-        //mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
+        mIngredientsExcludedTextView = (TextView) findViewById(R.id.ingredients_excluded);
+        mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
         //mSelectAmount = (TextView) findViewById(R.id.select_amount);
-        //mAddToOrderButton = (Button) findViewById(R.id.add_to_order_button);
+        mAddToOrderButton = (Button) findViewById(R.id.add_to_order_button);
 
         mFoodName.setText(mMenuItem.getName());
         mDescription.setText(mMenuItem.getDescription());
         Glide.with(this).load(mMenuItem.getServingUrl()).asGif().crossFade().into(mFoodImage);
 
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mMenuItem.getName());
+
         String priceString = getResources().getString(R.string.price);
         String ingredientsString = mMenuItem.getIngredients().toString().replaceAll("\\[|\\]", "").trim();
-        mIngredients.setText("Ingredients: "+ingredientsString);
+        mIngredients.setText("Ingredients: " + ingredientsString);
         if(mMenuItem.getAllergens() !=null){
             String allergensString = mMenuItem.getAllergens().toString().replaceAll("\\[|\\]", "").trim();
             if(allergensString.length()>0) {
@@ -86,14 +103,63 @@ public class MenuItemActivity extends MenuAbstractActivity{
                 mAllergens.setVisibility(View.VISIBLE);
             }
         }
+
+        mNumberPicker.setMinValue(1);
+        mNumberPicker.setMaxValue(10);
+
         priceString = String.format(priceString, DisplayUtil.longCentsToCurrency(mMenuItem.getPrice()));
         mPrice.setText(priceString);
+
+        mIngredientsExcluded = new ArrayList<>();
+
+        mDialogIngredientsSelected = new boolean[mMenuItem.getIngredients().size()];
+        makeDialogAllSelectedTrue();
+
     }
 
-    public void handleMenuItemSelect(View view){
-        Intent intent = new Intent(this, MenuItemDetailsActivity.class);
-        intent.putExtra(Globals.EXTRA_MENU_PK, mMenuItemPk);
-        startActivity(intent);
+    private void makeDialogAllSelectedTrue() {
+        for(int i=0;i<mDialogIngredientsSelected.length;i++){
+            mDialogIngredientsSelected[i] = true;
+        }
     }
 
+    public void handleCustomiseIngredientsButton(View view){
+        IngredientsExcludedDialog dialogFragment = IngredientsExcludedDialog.newInstance(mMenuItem.getIngredients().toArray(new String[0]), mDialogIngredientsSelected);
+        dialogFragment.show(getSupportFragmentManager(), "IngredientsFragment");
+    }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.ordermenu, menu);
+        return true;
+    }*/
+
+    @Override
+    public void onIngredientsDialogFinish(ArrayList<Integer> selectedItems) {
+        makeDialogAllSelectedTrue();
+        mIngredientsExcluded = new ArrayList<>();
+        for(int i=0;i<mMenuItem.getIngredients().size();i++){
+            if(!selectedItems.contains(i)){
+                mIngredientsExcluded.add(mMenuItem.getIngredients().get(i));
+                mDialogIngredientsSelected[i] = false;
+            }
+        }
+        if(mIngredientsExcluded.size()>0) {
+            mIngredientsExcludedTextView.setVisibility(View.VISIBLE);
+            mIngredientsExcludedTextView.setText("Ingredients excluded: " + DisplayUtil.listToString(mIngredientsExcluded));
+        } else {
+            mIngredientsExcludedTextView.setVisibility(View.GONE);
+        }
+    }
+
+    public void handleAddToOrderButton(View view){
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrderFk(mOrderDbHelper.readCurrentOrderPk());
+        orderItem.setMenuItemKeyString(mMenuItem.getKeyString());
+        orderItem.setMenuItemFk(mMenuItemPk);
+        orderItem.setIngredientsExcluded(mIngredientsExcluded);
+        orderItem.setAmount(mNumberPicker.getValue());
+        mOrderDbHelper.insertOrderItem(orderItem);
+        updateCartCount();
+    }
 }
