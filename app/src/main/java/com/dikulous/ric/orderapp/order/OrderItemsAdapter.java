@@ -50,6 +50,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
         public TextView mAmountTicker;
         public TextView mUnitPrice;
         public TextView mIngredientsExcludedTextView;
+        public TextView mSpecialRequestTextView;
         public ImageView mAddAmount;
         public ImageView mRemoveAmount;
 
@@ -63,6 +64,7 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
             mSubTotal = (TextView) itemView.findViewById(R.id.sub_total);
             mUnitPrice = (TextView) itemView.findViewById(R.id.unit_price);
             mIngredientsExcludedTextView = (TextView) itemView.findViewById(R.id.ingredients_excluded);
+            mSpecialRequestTextView = (TextView) itemView.findViewById(R.id.special_request);
             mAmountTicker = (TextView) itemView.findViewById(R.id.amount_ticker);
             mAddAmount = (ImageView) itemView.findViewById(R.id.add_amount);
             mRemoveAmount = (ImageView) itemView.findViewById(R.id.remove_amount);
@@ -87,18 +89,18 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
             @Override
             public void onOrderItemClick(View view, int position) {
                 TextView ingredientsExcluded = (TextView)view.findViewById(R.id.ingredients_excluded);
+                TextView specialRequest = (TextView)view.findViewById(R.id.special_request);
                 if(ingredientsExcluded.getMaxLines() == Integer.MAX_VALUE) {
                     ingredientsExcluded.setMaxLines(1);
                     ingredientsExcluded.setEllipsize(TextUtils.TruncateAt.END);
+                    specialRequest.setMaxLines(1);
+                    specialRequest.setEllipsize(TextUtils.TruncateAt.END);
                 } else {
                     ingredientsExcluded.setMaxLines(Integer.MAX_VALUE);
                     ingredientsExcluded.setEllipsize(null);
+                    specialRequest.setMaxLines(Integer.MAX_VALUE);
+                    specialRequest.setEllipsize(null);
                 }
-
-                //long pk = mDbHelper.readMenuItemPkByKeyString(mMenuItems.get(position).getKeyString());
-                //Intent intent = new Intent(mContext, MenuItemActivity.class);
-                //intent.putExtra(Globals.EXTRA_MENU_PK, pk);
-                //mContext.startActivity(intent);
             }
         });
         return vh;
@@ -115,6 +117,12 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
             viewHolder.mIngredientsExcludedTextView.setText("Ingredients excluded: "+ DisplayUtil.listToString(orderItem.getIngredientsExcluded()));
         } else {
             viewHolder.mIngredientsExcludedTextView.setVisibility(View.GONE);
+        }
+        if(orderItem.getSpecialRequest() != null){
+            viewHolder.mSpecialRequestTextView.setVisibility(View.VISIBLE);
+            viewHolder.mSpecialRequestTextView.setText("Request: "+orderItem.getSpecialRequest());
+        } else {
+            viewHolder.mSpecialRequestTextView.setVisibility(View.GONE);
         }
         viewHolder.mAmountTicker.setText("x"+String.valueOf(orderItem.getAmount()));
         viewHolder.mUnitPrice.setText(DisplayUtil.longCentsToCurrency(menuItem.getPrice())+"ea");

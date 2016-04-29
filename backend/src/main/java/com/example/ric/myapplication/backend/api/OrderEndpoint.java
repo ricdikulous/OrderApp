@@ -74,6 +74,12 @@ public class OrderEndpoint {
                     if (orderItemEntity.getIngredientsExcluded() != null) {
                         orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED, orderItemEntity.getIngredientsExcluded());
                     }
+                    if(orderItemEntity.getSpecialRequest() != null) {
+                        log.info(orderItemEntity.getSpecialRequest());
+                        orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_SPECIAL_REQUEST, orderItemEntity.getSpecialRequest());
+                    } else {
+                        log.info("spcial request null!");
+                    }
                     orderItems.add(orderItem);
                 } else {
                     log.info("MENU ITEM NOT FOUND");

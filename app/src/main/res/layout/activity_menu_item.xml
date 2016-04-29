@@ -101,6 +101,7 @@
                 android:hint="Special request"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textShortMessage|textCapSentences"
                 android:layout_below="@id/ingredients_excluded"/>
             <RelativeLayout
                 android:id="@+id/add_to_order_layout"

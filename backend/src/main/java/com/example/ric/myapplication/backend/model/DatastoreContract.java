@@ -43,6 +43,7 @@ public class DatastoreContract {
         public static final String COLUMN_NAME_MENU_ITEM_KEY = "itemKey";
         public static final String COLUMN_NAME_AMOUNT = "amount";
         public static final String COLUMN_NAME_INGREDIENTS_EXCLUDED = "ingredientsExcluded";
+        public static final String COLUMN_NAME_SPECIAL_REQUEST = "specialRequest";
         public static final String COLUMN_NAME_MENU_NAME = "name";
     }
 

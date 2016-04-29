@@ -11,7 +11,16 @@ public class OrderItem {
     Long menuItemFk;
     int amount;
     String menuItemKeyString;
+    String specialRequest;
     List<String> ingredientsExcluded;
+
+    public String getSpecialRequest() {
+        return specialRequest;
+    }
+
+    public void setSpecialRequest(String specialRequest) {
+        this.specialRequest = specialRequest;
+    }
 
     public Long getPk() {
         return pk;

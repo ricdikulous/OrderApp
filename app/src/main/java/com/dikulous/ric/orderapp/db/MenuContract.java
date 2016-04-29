@@ -47,6 +47,7 @@ public class MenuContract {
         public static final String COLUMN_NAME_MENU_ITEM_FK= "menuItemFk";
         public static final String COLUMN_NAME_AMOUNT= "amount";
         public static final String COLUMN_NAME_INGREDIENTS_EXCLUDED = "ingredientsExcluded";
+        public static final String COLUMN_NAME_SPECIAL_REQUEST = "specialRequest";
         public static final String COLUMN_NAME_MENU_ITEM_KEY_STRING = "menuItemKeyString";
     }
 
@@ -103,6 +104,7 @@ public class MenuContract {
                     OrderItemEntry.COLUMN_NAME_ORDER_FK + " INTEGER NOT NULL,"+
                     OrderItemEntry.COLUMN_NAME_AMOUNT + " INTEGER NOT NULL, "+
                     OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED + " TEXT, "+
+                    OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST + " TEXT, "+
                     OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING + " TEXT NOT NULL, "+
                     "FOREIGN KEY ("+OrderItemEntry.COLUMN_NAME_MENU_ITEM_FK+") REFERENCES "+ MenuEntry.TABLE_NAME+"("+MenuEntry._ID+"),"+
                     "FOREIGN KEY ("+OrderItemEntry.COLUMN_NAME_ORDER_FK+") REFERENCES "+ OrderEntry.TABLE_NAME+"("+OrderEntry._ID+")"
@@ -168,6 +170,7 @@ public class MenuContract {
             OrderItemEntry.COLUMN_NAME_ORDER_FK,
             OrderItemEntry.COLUMN_NAME_AMOUNT,
             OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED,
+            OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST,
             OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING,
     };
 

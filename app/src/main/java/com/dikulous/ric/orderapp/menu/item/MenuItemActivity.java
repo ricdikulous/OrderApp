@@ -18,9 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dikulous.ric.orderapp.R;
@@ -56,6 +58,7 @@ public class MenuItemActivity extends MenuAbstractActivity implements Ingredient
     private TextView mPrice;
     private TextView mIngredients;
     private TextView mAllergens;
+    private EditText mSpecialRequest;
     private TextView mIngredientsExcludedTextView;
     private NumberPicker mNumberPicker;
     private TextView mSelectAmount;
@@ -80,6 +83,7 @@ public class MenuItemActivity extends MenuAbstractActivity implements Ingredient
         mIngredients = (TextView) findViewById(R.id.ingredients);
         mAllergens = (TextView) findViewById(R.id.allergens);
         mIngredientsExcludedTextView = (TextView) findViewById(R.id.ingredients_excluded);
+        mSpecialRequest = (EditText) findViewById(R.id.special_request_edit_text);
         mNumberPicker = (NumberPicker) findViewById(R.id.number_picker);
         //mSelectAmount = (TextView) findViewById(R.id.select_amount);
         mAddToOrderButton = (Button) findViewById(R.id.add_to_order_button);
@@ -159,7 +163,12 @@ public class MenuItemActivity extends MenuAbstractActivity implements Ingredient
         orderItem.setMenuItemFk(mMenuItemPk);
         orderItem.setIngredientsExcluded(mIngredientsExcluded);
         orderItem.setAmount(mNumberPicker.getValue());
+        orderItem.setSpecialRequest(mSpecialRequest.getText().toString());
         mOrderDbHelper.insertOrderItem(orderItem);
+        Toast.makeText(this, "Added to order", Toast.LENGTH_LONG).show();
         updateCartCount();
+        Intent intent = new Intent(this, MenuItemActivity.class);
+        intent.putExtra(Globals.EXTRA_MENU_PK, mMenuItemPk);
+        startActivity(intent);
     }
 }

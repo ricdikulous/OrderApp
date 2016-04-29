@@ -63,8 +63,7 @@
         <activity android:name=".OrderPlacedActivity" />
         <activity android:name=".menu.gallery.MenuGalleryActivity" />
         <activity
-            android:name=".menu.item.MenuItemActivity"
-            android:launchMode="singleTop">
+            android:name=".menu.item.MenuItemActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dikulous.ric.orderapp.menu.gallery.MenuTabbedActivity" />

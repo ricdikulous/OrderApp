@@ -11,6 +11,15 @@ public class OrderItemEntity {
     Integer amount;
     List<String> ingredientsExcluded;
     String name;
+    String specialRequest;
+
+    public String getSpecialRequest() {
+        return specialRequest;
+    }
+
+    public void setSpecialRequest(String specialRequest) {
+        this.specialRequest = specialRequest;
+    }
 
     public String getName() {
         return name;

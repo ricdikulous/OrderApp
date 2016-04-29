@@ -51,6 +51,9 @@ public class OrderDbHelper extends MenuDbHelper {
         if(orderItem.getIngredientsExcluded() != null && orderItem.getIngredientsExcluded().size()>0) {
             values.put(MenuContract.OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED, gson.toJson(orderItem.getIngredientsExcluded()));
         }
+        if(orderItem.getSpecialRequest() != null && orderItem.getSpecialRequest().trim().length()>0){
+            values.put(MenuContract.OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST, orderItem.getSpecialRequest());
+        }
         values.put(MenuContract.OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING, orderItem.getMenuItemKeyString());
 
 
@@ -336,6 +339,10 @@ public class OrderDbHelper extends MenuDbHelper {
         if(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED)) != null){
             orderItem.setIngredientsExcluded(gson.fromJson(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED)), ArrayList.class));
         }
+        if(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST)) != null){
+            orderItem.setSpecialRequest(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST)));
+        }
+
         orderItem.setMenuItemKeyString(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING)));
         return orderItem;
     }
@@ -347,6 +354,9 @@ public class OrderDbHelper extends MenuDbHelper {
         if(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED)) != null){
             orderItemEntity.setIngredientsExcluded(gson.fromJson(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_INGREDIENTS_EXCLUDED)), ArrayList.class));
 
+        }
+        if(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST)) != null){
+            orderItemEntity.setSpecialRequest(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_SPECIAL_REQUEST)));
         }
         orderItemEntity.setMenuItemKeyString(cursor.getString(cursor.getColumnIndex(MenuContract.OrderItemEntry.COLUMN_NAME_MENU_ITEM_KEY_STRING)));
         return orderItemEntity;
