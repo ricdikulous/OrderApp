@@ -3,35 +3,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     tools:context="com.dikulous.ric.orderapp.order.monitor.MonitorOrderActivity"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/order_received"
+    <RelativeLayout
+        android:id="@+id/order_received_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Order Received"/>
-    <TextView
-        android:id="@+id/preparing_order"
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/order_received_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_received_48dp"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/order_received_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/order_received_image"
+            android:text="Received"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/preparing_order_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Preparing Order"/>
-    <TextView
-        android:id="@+id/cooking"
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/preparing_order_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_preparing_48dp"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/preparing_order_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/preparing_order_image"
+            android:text="Preparing"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/cooking_order_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Cooking"/>
-    <TextView
-        android:id="@+id/dispatched"
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/cooking_order_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cooking_48dp"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/cooking_order_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cooking_order_image"
+            android:text="Cooking"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/order_dispatched_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Being Delivered"/>
-
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/order_dispatched_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dispatched_48dp"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/order_dispatched_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/order_dispatched_image"
+            android:text="Dispatched"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
 </LinearLayout>

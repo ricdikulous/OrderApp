@@ -6,4 +6,7 @@
     <color name="imageTextBackground">#80000000</color>
     <color name="imageText">#FFFFFF</color>
     <color name="warning">#FFFEA610</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="stepSelected">#6eb2ff</color>
 </resources>

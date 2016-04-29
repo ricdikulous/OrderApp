@@ -8,6 +8,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dikulous.ric.orderapp.R;
@@ -17,10 +19,24 @@ import com.dikulous.ric.orderapp.util.Globals;
 public class MonitorOrderActivity extends AppCompatActivity {
 
     private static final String TAG = "Monitor Order";
-    private TextView mOrderReceived;
-    private TextView mPreparingOrder;
-    private TextView mCooking;
-    private TextView mDispatched;
+
+    private RelativeLayout mOrderReceivedLayout;
+    private RelativeLayout mPreparingOrderLayout;
+    private RelativeLayout mCookingOrderLayout;
+    private RelativeLayout mOrderDispatchedLayout;
+    private ImageView mOrderReceivedImage;
+    private ImageView mPreparingOrderImage;
+    private ImageView mCookingOrderImage;
+    private ImageView mOrderDispatchedImage;
+    private TextView mOrderReceivedText;
+    private TextView mPreparingOrderText;
+    private TextView mCookingOrderText;
+    private TextView mOrderDispatchedText;
+
+    private MonitorOrderStep mReceivedStep;
+    private MonitorOrderStep mPreparingStep;
+    private MonitorOrderStep mCookingStep;
+    private MonitorOrderStep mDispatchedStep;
 
     private int mCurrentStatus;
     private long mOrderPk;
@@ -35,10 +51,26 @@ public class MonitorOrderActivity extends AppCompatActivity {
         mOrderPk = getIntent().getLongExtra(Globals.EXTRA_ORDER_PK, 0);
         mOrderDbHelper = new OrderDbHelper(this);
 
-        mOrderReceived = (TextView) findViewById(R.id.order_received);
-        mPreparingOrder = (TextView) findViewById(R.id.preparing_order);
-        mCooking = (TextView) findViewById(R.id.cooking);
-        mDispatched = (TextView) findViewById(R.id.dispatched);
+        mOrderReceivedLayout = (RelativeLayout) findViewById(R.id.order_received_layout);
+        mPreparingOrderLayout = (RelativeLayout) findViewById(R.id.preparing_order_layout);
+        mCookingOrderLayout = (RelativeLayout) findViewById(R.id.cooking_order_layout);
+        mOrderDispatchedLayout = (RelativeLayout) findViewById(R.id.order_dispatched_layout);
+
+        mOrderReceivedImage = (ImageView) findViewById(R.id.order_received_image);
+        mPreparingOrderImage = (ImageView) findViewById(R.id.preparing_order_image);
+        mCookingOrderImage = (ImageView) findViewById(R.id.cooking_order_image);
+        mOrderDispatchedImage = (ImageView) findViewById(R.id.order_dispatched_image);
+
+        mOrderReceivedText = (TextView) findViewById(R.id.order_received_text);
+        mPreparingOrderText = (TextView) findViewById(R.id.preparing_order_text);
+        mCookingOrderText = (TextView) findViewById(R.id.cooking_order_text);
+        mOrderDispatchedText = (TextView) findViewById(R.id.order_dispatched_text);
+
+        mReceivedStep = new MonitorOrderStep(this, mOrderReceivedLayout, mOrderReceivedImage, mOrderReceivedText, R.drawable.ic_received_48dp, R.drawable.ic_received_white_48dp);
+        mPreparingStep = new MonitorOrderStep(this, mPreparingOrderLayout, mPreparingOrderImage, mPreparingOrderText, R.drawable.ic_preparing_48dp, R.drawable.ic_preparing_white_48dp);
+        mCookingStep = new MonitorOrderStep(this, mCookingOrderLayout, mCookingOrderImage, mCookingOrderText, R.drawable.ic_cooking_48dp, R.drawable.ic_cooking_white_48dp);
+        mDispatchedStep = new MonitorOrderStep(this, mOrderDispatchedLayout, mOrderDispatchedImage, mOrderDispatchedText, R.drawable.ic_dispatched_48dp, R.drawable.ic_dispatched_white_48dp);
+
     }
 
     @Override
@@ -58,6 +90,7 @@ public class MonitorOrderActivity extends AppCompatActivity {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            mReceivedStep.setSelected();
             updateStatus();
         }
     };
@@ -68,21 +101,24 @@ public class MonitorOrderActivity extends AppCompatActivity {
         resetUi();
         switch (mCurrentStatus){
             case Globals.ORDER_RECEIVED:
-                mOrderReceived.setText("here");
+                mReceivedStep.setSelected();
                 break;
             case Globals.ORDER_PREPARING:
-                mPreparingOrder.setText("here");
+                mPreparingStep.setSelected();
                 break;
             case Globals.ORDER_COOKING:
-                mCooking.setText("here");
+                mCookingStep.setSelected();
                 break;
             case Globals.ORDER_DISPATCHED:
-                mDispatched.setText("here");
+                mDispatchedStep.setSelected();
                 break;
         }
     }
 
     private void resetUi(){
-        //Reset everything back to original
+        mReceivedStep.setDefault();
+        mPreparingStep.setDefault();
+        mCookingStep.setDefault();
+        mDispatchedStep.setDefault();
     }
 }

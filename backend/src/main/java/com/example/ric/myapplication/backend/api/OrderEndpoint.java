@@ -55,11 +55,11 @@ public class OrderEndpoint {
         Logger log = Logger.getLogger("Receiving Order");
         log.setLevel(Level.INFO);
         OrderReceiptEntity orderReceipt = new OrderReceiptEntity();
-        orderReceipt.setSuccess(false);
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //DELETE THIS "true" WHEN NO LONGER USING NO NETWORK FOR PAYPAL !!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        orderReceipt.setSuccess(true);//set this to false
         if(!paymentIdAlreadyExists(orderEntity.getPaymentId()) || true) {
             log.info("Payment Id does not already exist");
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -127,8 +127,6 @@ public class OrderEndpoint {
             log.info("rejected from server cause Payment ID already assigned to another order");
             //ID already exists, possibly fraud? Most like fuck up
         }
-        GcmSender.sendStatus(6, orderEntity.getRegistrationToken());
-
         return orderReceipt;
     }
 
