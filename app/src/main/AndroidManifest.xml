@@ -81,11 +81,6 @@
             android:exported="true" />
 
         <activity android:name=".order.monitor.MonitorOrderActivity" />
-        <activity android:name=".menu.item.MenuItemDetailsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.dikulous.ric.orderapp.menu.item.MenuItemActivity" />
-        </activity>
         <activity android:name=".order.AddressEntryActivity"></activity>
     </application>
 
