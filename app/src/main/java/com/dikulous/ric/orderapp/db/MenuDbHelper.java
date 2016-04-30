@@ -241,4 +241,18 @@ public class MenuDbHelper extends SQLiteOpenHelper{
         menuItem.setType(cursor.getLong(cursor.getColumnIndex(MenuContract.MenuEntry.COLUMN_NAME_TYPE_FK)));
         return menuItem;
     }
+
+    public void insertMenu(MenuTypesEntity menuTypesEntity, List<MenuItemEntity> menuItems) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            deleteAllMenuItems();
+            deleteAllMenuTypes();
+            insertMenuTypes(menuTypesEntity);
+            insertMenuItems(menuItems);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
 }

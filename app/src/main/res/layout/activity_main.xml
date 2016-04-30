@@ -27,11 +27,19 @@
         android:layout_centerHorizontal="true"
         android:hint="@string/continue_order"
         android:onClick="handleContinueOrderButtonClick"/>
+    <Button
+        android:id="@+id/try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/continue_order"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/try_again"
+        android:onClick="handleTryAgainButtonClick"/>
     <RelativeLayout
         android:id="@+id/menu_download_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/continue_order"
+        android:layout_below="@id/try_again"
         >
         <TextView
             android:id="@+id/menu_download_text"

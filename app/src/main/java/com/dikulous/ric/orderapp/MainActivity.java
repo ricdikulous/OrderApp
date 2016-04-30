@@ -1,7 +1,9 @@
 package com.dikulous.ric.orderapp;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.dikulous.ric.orderapp.db.AddressDbHelper;
 import com.dikulous.ric.orderapp.db.MenuDbHelper;
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private OrderDbHelper mOrderDbHelper;
     private Button mCreateNewOrderButton;
     private Button mContinueOrderButton;
+    private Button mTryAgainButton;
+    private TextView mMenuDownloadText;
+    private ProgressBar mProgressBar;
     private RelativeLayout mMenuDownloadInfo;
     private SharedPreferences mSharedPreferences;
     private boolean mStartedDownload;
@@ -48,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         mCreateNewOrderButton = (Button) findViewById(R.id.create_new_order);
         mContinueOrderButton = (Button) findViewById(R.id.continue_order);
+        mTryAgainButton = (Button) findViewById(R.id.try_again);
+        mMenuDownloadText = (TextView) findViewById(R.id.menu_download_text);
+        mProgressBar = (ProgressBar) findViewById(R.id.menu_download_spinner);
         mMenuDownloadInfo = (RelativeLayout) findViewById(R.id.menu_download_info);
 
         if(checkPlayServices()) {
@@ -74,14 +83,12 @@ public class MainActivity extends AppCompatActivity {
             mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
         }
         if(mSharedPreferences.getBoolean(Globals.EXTRA_IS_DOWNLOADING, false) || mStartedDownload) {
-            Log.i(TAG, "Is downloading!| mStartedDownload: "+mStartedDownload);
-            mCreateNewOrderButton.setEnabled(false);
-            mContinueOrderButton.setEnabled(false);
-            mMenuDownloadInfo.setVisibility(View.VISIBLE);
+            Log.i(TAG, "Is downloading!| mStartedDownload: " + mStartedDownload);
+            setUiDownloading();
+        } else if(mSharedPreferences.getBoolean(Globals.EXTRA_DOWNLOAD_SUCCESSFUL, true)) {
+            setUiDownloadSuccessful();
         } else {
-            mCreateNewOrderButton.setEnabled(true);
-            mContinueOrderButton.setEnabled(true);
-            mMenuDownloadInfo.setVisibility(View.GONE);
+            setUiDownloadFailed();
         }
         mStartedDownload = false;
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -118,9 +125,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(Globals.INTENT_DOWNLOAD_FINISHED)){
-                mCreateNewOrderButton.setEnabled(true);
-                mContinueOrderButton.setEnabled(true);
-                mMenuDownloadInfo.setVisibility(View.GONE);
+                if(intent.getBooleanExtra(Globals.EXTRA_DOWNLOAD_SUCCESSFUL, true)){
+                    setUiDownloadSuccessful();
+                } else {
+                    setUiDownloadFailed();
+                }
+                //createDownloadFailedDialog();
             }
         }
     };
@@ -140,5 +150,59 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void createDownloadFailedDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Please ensure you have a stable internet connection and try again")
+                .setTitle("Failed to download menu");
+
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //startMenuDownload();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                //startMenuDownload();
+            }
+        });
+        dialog.show();
+    }
+
+
+    public void handleTryAgainButtonClick(View v){
+        Intent intent = new Intent(this, MenuDownloadService.class);
+        startService(intent);
+        setUiDownloading();
+    }
+
+    private void setUiDownloading(){
+        mCreateNewOrderButton.setEnabled(false);
+        mContinueOrderButton.setEnabled(false);
+        mMenuDownloadText.setText(R.string.menu_download);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mMenuDownloadInfo.setVisibility(View.VISIBLE);
+        mTryAgainButton.setVisibility(View.GONE);
+    }
+
+    private void setUiDownloadSuccessful(){
+        mCreateNewOrderButton.setEnabled(true);
+        mContinueOrderButton.setEnabled(true);
+        mMenuDownloadInfo.setVisibility(View.GONE);
+        mTryAgainButton.setVisibility(View.GONE);
+    }
+
+    private void setUiDownloadFailed(){
+        mCreateNewOrderButton.setEnabled(false);
+        mContinueOrderButton.setEnabled(false);
+        mMenuDownloadText.setText(R.string.menu_download_failed);
+        mProgressBar.setVisibility(View.GONE);
+        mMenuDownloadInfo.setVisibility(View.VISIBLE);
+        mTryAgainButton.setVisibility(View.VISIBLE);
     }
 }

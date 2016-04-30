@@ -35,13 +35,13 @@
             android:layout_alignParentBottom="true"
             />
         <Button
-            android:id="@+id/submit_order_button"
+            android:id="@+id/continue_order_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Continue"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:onClick="handleSubmitOrderButton"
+            android:onClick="handleContinueOrderButton"
             />
     </RelativeLayout>
 

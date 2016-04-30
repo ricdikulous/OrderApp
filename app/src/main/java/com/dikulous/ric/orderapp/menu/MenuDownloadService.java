@@ -1,11 +1,13 @@
 package com.dikulous.ric.orderapp.menu;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -109,8 +111,8 @@ public class MenuDownloadService extends Service {
         protected void onPostExecute(Boolean successful) {
             if(successful && mMenuVersion != mSharedPreferences.getInt(Globals.EXTRA_MENU_VERSION, 0)) {
                 mAttempts = 0;
-                mDbHelper.deleteAllMenuItems();
-                mDbHelper.deleteAllMenuTypes();
+                //mDbHelper.deleteAllMenuItems();
+                //mDbHelper.deleteAllMenuTypes();
                 new GetMenuTypesAsync().execute(mContext);
             } else if(!successful){
                 if(mAttempts < 5) {
@@ -147,8 +149,8 @@ public class MenuDownloadService extends Service {
         @Override
         protected void onPostExecute(Boolean successful) {
             if(successful) {
-                mDbHelper.deleteAllMenuTypes();
-                mDbHelper.insertMenuTypes(mMenuTypesEntity);
+                //mDbHelper.deleteAllMenuTypes();
+                //mDbHelper.insertMenuTypes(mMenuTypesEntity);
                 mAttempts = 0;
                 new GetMenuItemsAsync().execute(mContext);
             } else if(mAttempts < 5){
@@ -181,8 +183,8 @@ public class MenuDownloadService extends Service {
         protected void onPostExecute(Boolean successful) {
             if(successful) {
                 mAttempts = 0;
-                mDbHelper.deleteAllMenuItems();
-                mDbHelper.insertMenuItems(mMenuItems);
+                //mDbHelper.deleteAllMenuItems();
+                mDbHelper.insertMenu(mMenuTypesEntity, mMenuItems);
                 mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
                 mSharedPreferences.edit().putInt(Globals.EXTRA_MENU_VERSION, mMenuVersion).apply();
                 downloadFinished(true);
@@ -223,14 +225,16 @@ public class MenuDownloadService extends Service {
 
     private void downloadFinished(boolean successful){
         mSharedPreferences.edit().putBoolean(Globals.EXTRA_IS_DOWNLOADING, false).apply();
-        broadcastDownloadFinished();
+        mSharedPreferences.edit().putBoolean(Globals.EXTRA_DOWNLOAD_SUCCESSFUL, successful).apply();
+        broadcastDownloadFinished(successful);
         stopForeground(true);
-        Log.i(TAG, "Successful? "+successful);
+        Log.i(TAG, "Successful? " + successful);
         stopSelf();
     }
 
-    private void broadcastDownloadFinished() {
+    private void broadcastDownloadFinished(boolean successful) {
         Intent broadcastIntent = new Intent(Globals.INTENT_DOWNLOAD_FINISHED);
+        broadcastIntent.putExtra(Globals.EXTRA_DOWNLOAD_SUCCESSFUL, successful);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
     }
 

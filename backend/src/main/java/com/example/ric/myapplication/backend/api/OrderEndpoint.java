@@ -67,7 +67,7 @@ public class OrderEndpoint {
             for (OrderItemEntity orderItemEntity : orderEntity.getOrderItemEntities()) {
                 EmbeddedEntity orderItem = new EmbeddedEntity();
                 MenuItemEntity menuItemEntity = DatastoreUtil.readMenuItemEntity(orderItemEntity.getMenuItemKeyString());
-                if(menuItemEntity != null) {
+                if(menuItemEntity != null && orderItemEntity.getAmount() > 0) {
                     orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_NAME, menuItemEntity.getName());
                     orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_AMOUNT, orderItemEntity.getAmount());
                     orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_ITEM_KEY, KeyFactory.stringToKey(orderItemEntity.getMenuItemKeyString()));
@@ -82,46 +82,50 @@ public class OrderEndpoint {
                     }
                     orderItems.add(orderItem);
                 } else {
-                    log.info("MENU ITEM NOT FOUND");
+                    log.info("MENU ITEM NOT FOUND OR AMOUNT 0");
                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     // ISSUE WITH ORDER CAN NOT FIND THE MENU ITEM OF THE ORDER ITEM
                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 }
             }
-            Entity order = new Entity(DatastoreContract.OrdersEntry.KIND);
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ORDER_ITEMS, orderItems);
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ADDRESS, orderEntity.getAddress());
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_PAYMENT_ID, orderEntity.getPaymentId());
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_PHONE_NUMBER, orderEntity.getPhoneNumber());
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_REGISTRATION_TOKEN, orderEntity.getRegistrationToken());
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_CREATED_AT, new Date().getTime());
-            order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, Globals.ORDER_RECEIVED);
+            if(orderItems.size() > 0) {
+                Entity order = new Entity(DatastoreContract.OrdersEntry.KIND);
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ORDER_ITEMS, orderItems);
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_ADDRESS, orderEntity.getAddress());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_PAYMENT_ID, orderEntity.getPaymentId());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_PHONE_NUMBER, orderEntity.getPhoneNumber());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_REGISTRATION_TOKEN, orderEntity.getRegistrationToken());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_CREATED_AT, new Date().getTime());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, Globals.ORDER_RECEIVED);
 
-            InputStream is = OrderEndpoint.class.getResourceAsStream("/sdk_config.properties");
-            OAuthTokenCredential tokenCredential = null;
-            try {
-                tokenCredential = Payment.initConfig(is);
-                String accessToken = tokenCredential.getAccessToken();
-                Payment payment = Payment.get(accessToken, orderEntity.getPaymentId());
-                //double check amount
-                if(isCorrectAmount(payment.getTransactions().get(0).getAmount(), orderEntity)){
-                    log.info("is correct amount");
-                    orderReceipt.setSuccess(true);
-                    //datastore.put(order);
-                } else {
-                    log.info("not correct");
+                InputStream is = OrderEndpoint.class.getResourceAsStream("/sdk_config.properties");
+                OAuthTokenCredential tokenCredential = null;
+                try {
+                    tokenCredential = Payment.initConfig(is);
+                    String accessToken = tokenCredential.getAccessToken();
+                    Payment payment = Payment.get(accessToken, orderEntity.getPaymentId());
+                    //double check amount
+                    if (isCorrectAmount(payment.getTransactions().get(0).getAmount(), orderEntity)) {
+                        log.info("is correct amount");
+                        orderReceipt.setSuccess(true);
+                        //datastore.put(order);
+                    } else {
+                        log.info("not correct");
+                    }
+                } catch (PayPalRESTException e) {
+                    e.printStackTrace();
                 }
-            } catch (PayPalRESTException e) {
-                e.printStackTrace();
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //DELETE THIS WHEN NO LONGER USING NO NETWORK FOR PAYPAL !!!!!!!!!!!!!!!!!!!
+                //USE THE COMMENTED OUT ONE JUST ABOVE
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                Key key = datastore.put(order);
+                OrderEntity orderEntity1 = DatastoreUtil.readOrderEntity(key);
+                ChannelUtil.sendUpdateToAllUsers(orderEntity1);
+            } else {
+                log.info("No valid order Items");
             }
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //DELETE THIS WHEN NO LONGER USING NO NETWORK FOR PAYPAL !!!!!!!!!!!!!!!!!!!
-            //USE THE COMMENTED OUT ONE JUST ABOVE
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Key key = datastore.put(order);
-            OrderEntity orderEntity1 = DatastoreUtil.readOrderEntity(key);
-            ChannelUtil.sendUpdateToAllUsers(orderEntity1);
 
         } else {
             log.info("rejected from server cause Payment ID already assigned to another order");

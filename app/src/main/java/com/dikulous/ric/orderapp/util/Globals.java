@@ -9,6 +9,8 @@ public class Globals {
     public static final String EXTRA_IS_DOWNLOADING = "com.dikulous.ric.orderapp.EXTRA_IS_DOWNLOADING";
     public static final String EXTRA_MENU_VERSION = "com.dikulous.ric.orderapp.EXTRA_MENU_VERSION";
     public static final String EXTRA_DOWNLOAD_STARTED = "come.dikulous.com.orderapp.EXTRA_DOWNLOAD_STARTED";
+    public static final String EXTRA_DOWNLOAD_SUCCESSFUL = "com.dikulous.ric.EXTRA_DOWNLOAD_SUCCESSFUL";
+
 
 
     public static final String GCM_TOKEN = "com.dikulous.ric.orderapp.GCM_TOKEN";

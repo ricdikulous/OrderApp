@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,13 +35,15 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
     private MenuDbHelper menuDbHelper;
     private OrderDbHelper mOrderDbHelper;
     private TextView mTotalPriceTextView;
+    private Button mContinueOrderButton;
 
-    public OrderItemsAdapter(Context context, List<OrderItem> orderItems, TextView totalPriceTextView) {
+    public OrderItemsAdapter(Context context, List<OrderItem> orderItems, TextView totalPriceTextView, Button continueOrderButton) {
         this.mContext = context;
         this.mOrderItems = orderItems;
         menuDbHelper = new MenuDbHelper(context);
         mOrderDbHelper = new OrderDbHelper(context);
         mTotalPriceTextView = totalPriceTextView;
+        mContinueOrderButton = continueOrderButton;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -158,7 +161,11 @@ public class OrderItemsAdapter extends RecyclerView.Adapter {
                 total += item.getAmount()*price;
             }
             mTotalPriceTextView.setText("Total: "+DisplayUtil.longCentsToCurrency(total));
-
+            if(total < 1){
+                mContinueOrderButton.setEnabled(false);
+            } else {
+                mContinueOrderButton.setEnabled(true);
+            }
         }
     }
 

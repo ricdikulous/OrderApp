@@ -28,4 +28,6 @@
     <string name="dialog_order_submit_failed_title">Failed to submit order</string>
     <string name="dialog_order_submit_failed_message">Please make sure you have a steady internet connection and try again</string>
     <string name="ok">Okay</string>
+    <string name="try_again">Try again</string>
+    <string name="menu_download_failed">Menu download failed</string>
 </resources>
