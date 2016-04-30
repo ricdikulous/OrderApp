@@ -25,4 +25,7 @@
     <string name="contact_numer">Contact number</string>
     <string name="submit_address">Submit order</string>
     <string name="suburb">Suburb</string>
+    <string name="dialog_order_submit_failed_title">Failed to submit order</string>
+    <string name="dialog_order_submit_failed_message">Please make sure you have a steady internet connection and try again</string>
+    <string name="ok">Okay</string>
 </resources>

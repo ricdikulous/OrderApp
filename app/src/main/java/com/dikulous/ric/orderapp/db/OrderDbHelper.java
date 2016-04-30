@@ -82,6 +82,34 @@ public class OrderDbHelper extends MenuDbHelper {
         return count;
     }
 
+    public boolean readHasPaymentId(long orderPk){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                MenuContract.OrderEntry.COLUMN_NAME_PAYMENT_ID,
+        };
+
+        String selection = MenuContract.OrderEntry._ID+"= ?";
+        String[] selectionArgs = {String.valueOf(orderPk)};
+        Cursor cursor = db.query(
+                MenuContract.OrderEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null);
+
+        if(cursor != null){
+            if (cursor.moveToFirst()){
+                if(cursor.getString(cursor.getColumnIndex(MenuContract.OrderEntry.COLUMN_NAME_PAYMENT_ID)) != null){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public int updateOrderReceived(long orderPk, OrderReceiptEntity orderReceipt) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

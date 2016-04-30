@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -97,6 +98,7 @@ public class AddressEntryActivity extends AppCompatActivity {
         mProgressDialog.setMessage("Sending order...");
         mProgressDialog.setCancelable(false);
 
+
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setBoundsBias(new LatLngBounds(
                 new LatLng(-34.880490, 150.184363),
@@ -166,6 +168,18 @@ public class AddressEntryActivity extends AppCompatActivity {
     }
 
     public void handleSubmitAddressButton(View v){
+        if(mAddressDbHelper.readAddress(mOrderPk) == null){
+            if(saveAddress()) {
+                launchPayPal();
+            }
+        } else if(!mAddressDbHelper.readHasPaymentId(mOrderPk)){
+            launchPayPal();
+        } else {
+            new SendOrderAsyncTask().execute(this);
+        }
+    }
+
+    private boolean saveAddress(){
         boolean error = false;
         if(mStreetNumber.getText().toString().equals("")){
             mStreetNumber.setError("Pleace enter a street number");
@@ -187,7 +201,7 @@ public class AddressEntryActivity extends AppCompatActivity {
             mContactNumber.setError("Pleace enter a contact number");
             error = true;
         }
-        if(!error){
+        if(!error) {
             Address address;
             long orderFk = mAddressDbHelper.readCurrentOrderPk();
             String unitNumber = mUnitNumber.getText().toString();
@@ -196,32 +210,34 @@ public class AddressEntryActivity extends AppCompatActivity {
             String suburb = mSuburb.getText().toString();
             String postcode = mPostcode.getText().toString();
             String contactNumber = mContactNumber.getText().toString();
-            if(unitNumber != null && !unitNumber.equals("")){
+            if (unitNumber != null && !unitNumber.equals("")) {
                 address = new Address(orderFk, unitNumber, streetNumber, street, suburb, postcode, contactNumber);
             } else {
                 address = new Address(orderFk, streetNumber, street, suburb, postcode, contactNumber);
             }
             mAddressDbHelper.insertNewAddress(address);
-            Log.i(TAG, "reading: " + mAddressDbHelper.readAddress(orderFk).toString());
-
-            // PAYMENT_INTENT_SALE will cause the payment to complete immediately.
-            // Change PAYMENT_INTENT_SALE to
-            //   - PAYMENT_INTENT_AUTHORIZE to only authorize payment and capture funds later.
-            //   - PAYMENT_INTENT_ORDER to create a payment for authorization and capture
-            //     later via calls from your server.
-
-            PayPalPayment payment = new PayPalPayment(calculateTotal(), "AUD", "Order",
-                    PayPalPayment.PAYMENT_INTENT_SALE);
-
-            Intent intent = new Intent(this, PaymentActivity.class);
-
-            // send the same configuration for restart resiliency
-            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-
-            intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-
-            startActivityForResult(intent, 0);
         }
+        return !error;
+    }
+
+    private void launchPayPal(){
+        // PAYMENT_INTENT_SALE will cause the payment to complete immediately.
+        // Change PAYMENT_INTENT_SALE to
+        //   - PAYMENT_INTENT_AUTHORIZE to only authorize payment and capture funds later.
+        //   - PAYMENT_INTENT_ORDER to create a payment for authorization and capture
+        //     later via calls from your server.
+
+        PayPalPayment payment = new PayPalPayment(calculateTotal(), "AUD", "Order",
+                PayPalPayment.PAYMENT_INTENT_SALE);
+
+        Intent intent = new Intent(this, PaymentActivity.class);
+
+        // send the same configuration for restart resiliency
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+
+        startActivityForResult(intent, 0);
     }
 
     private BigDecimal calculateTotal(){
@@ -243,7 +259,6 @@ public class AddressEntryActivity extends AppCompatActivity {
                     Log.i("paymentExample", confirm.toJSONObject().toString(4));
                     Log.i(TAG, confirm.getProofOfPayment().getPaymentId());
                     mAddressDbHelper.updateWithPaymentId(confirm.getProofOfPayment().getPaymentId(), mOrderPk);
-                    mProgressDialog.show();
                     new SendOrderAsyncTask().execute(this);
                     // TODO: send 'confirm' to your server for verification.
                     // see https://developer.paypal.com/webapps/developer/docs/integration/mobile/verify-mobile-payment/
@@ -269,14 +284,19 @@ public class AddressEntryActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public class SendOrderAsyncTask extends AsyncTask<Context, Void, Integer> {
+    public class SendOrderAsyncTask extends AsyncTask<Context, Void, Boolean> {
         private static final String TAG = "Order Asnc";
         private Context mContext;
         private OrderApi mOrderApi;
         private OrderDbHelper mOrderDbHelper;
 
         @Override
-        protected Integer doInBackground(Context... params) {
+        protected void onPreExecute(){
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Context... params) {
 
             if (mOrderApi == null) {
                 OrderApi.Builder builder = new OrderApi.Builder(AndroidHttp.newCompatibleTransport(),
@@ -298,17 +318,23 @@ public class AddressEntryActivity extends AppCompatActivity {
                 //Log.i(TAG, "Got menu types: " + menuTypes.getMenuTypes().toString());
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
-            return 0;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Integer result) {
+        protected void onPostExecute(Boolean success) {
             Log.i(TAG, "done sending");
             mProgressDialog.cancel();
-            Intent intent = new Intent(mContext, MonitorOrderActivity.class);
-            intent.putExtra(Globals.EXTRA_ORDER_PK, mOrderPk);
-            mContext.startActivity(intent);
+            if(success) {
+                Intent intent = new Intent(mContext, MonitorOrderActivity.class);
+                intent.putExtra(Globals.EXTRA_ORDER_PK, mOrderPk);
+                mContext.startActivity(intent);
+            } else {
+                DialogFragment dialog = new OrderSubmitFailedDialog();
+                dialog.show(getSupportFragmentManager(), "SubmitFailedDialog");
+            }
             //mDbHelper.insertMenuTypes(mMenuTypesEntity);
             //new GetMenuItemsAsync().execute(mContext);
         }

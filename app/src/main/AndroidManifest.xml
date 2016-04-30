@@ -72,12 +72,13 @@
         <activity
             android:name=".menu.gallery.MenuTabbedActivity"
             android:label="@string/title_activity_menu_tabbed"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"/>
 
         <service
             android:name=".menu.MenuDownloadService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity android:name=".order.monitor.MonitorOrderActivity" />
         <activity android:name=".order.AddressEntryActivity"></activity>

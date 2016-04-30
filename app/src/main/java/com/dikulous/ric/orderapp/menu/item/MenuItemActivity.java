@@ -169,6 +169,7 @@ public class MenuItemActivity extends MenuAbstractActivity implements Ingredient
         updateCartCount();
         Intent intent = new Intent(this, MenuItemActivity.class);
         intent.putExtra(Globals.EXTRA_MENU_PK, mMenuItemPk);
+        finish();
         startActivity(intent);
     }
 }
