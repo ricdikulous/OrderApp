@@ -26,11 +26,14 @@ public class OrderDbHelper extends MenuDbHelper {
         super(context);
     }
 
-    public long insertNewOrder(){
+    public long insertNewOrder(String gcmRegistrationToken){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(MenuContract.OrderEntry.COLUMN_NAME_CREATED_AT, new Date().getTime());
+        long createdAt = new Date().getTime();
+
+        values.put(MenuContract.OrderEntry.COLUMN_NAME_CREATED_AT, createdAt);
+        values.put(MenuContract.OrderEntry.COLUMN_NAME_USER_GENERATED_KEY, gcmRegistrationToken+createdAt);
         values.put(MenuContract.OrderEntry.COLUMN_NAME_IS_CURRENT, true);
         values.put(MenuContract.OrderEntry.COLUMN_NAME_STATUS, Globals.ORDER_CREATED);
 
@@ -301,10 +304,9 @@ public class OrderDbHelper extends MenuDbHelper {
         if(cursor != null){
             if(cursor.moveToFirst()){
                 orderEntity.setPaymentId(cursor.getString(cursor.getColumnIndex(MenuContract.OrderEntry.COLUMN_NAME_PAYMENT_ID)));
+                orderEntity.setUserGeneratedKey(cursor.getString(cursor.getColumnIndex(MenuContract.OrderEntry.COLUMN_NAME_USER_GENERATED_KEY)));
             }
         }
-
-
         orderEntity.setOrderItemEntities(readCurrentOrderItemEntities());
 
         return orderEntity;

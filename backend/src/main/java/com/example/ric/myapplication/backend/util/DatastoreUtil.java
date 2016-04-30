@@ -25,6 +25,18 @@ import java.util.logging.Logger;
  */
 public class DatastoreUtil {
 
+    public static boolean userGeneratedKeyAlreadyExists(String userGeneratedKey){
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query q = new Query(DatastoreContract.OrdersEntry.KIND);
+        Query.Filter userGeneratedKeyFilter = new Query.FilterPredicate(DatastoreContract.OrdersEntry.COLUMN_NAME_USER_GENERATED_KEY, Query.FilterOperator.EQUAL, userGeneratedKey);
+        q.setFilter(userGeneratedKeyFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        for(Entity e: pq.asIterable()){
+            return true;
+        }
+        return false;
+    }
+
     public static void saveChannelKey(String channelKey) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity entity;

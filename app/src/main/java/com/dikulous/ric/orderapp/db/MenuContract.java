@@ -37,6 +37,7 @@ public class MenuContract {
         public static final String COLUMN_NAME_IS_CURRENT = "isCurrent";
         public static final String COLUMN_NAME_STATUS = "status";
         public static final String COLUMN_NAME_PAYMENT_ID = "paymentId";
+        public static final String COLUMN_NAME_USER_GENERATED_KEY = "userGeneratedKey";
         public static final String COLUMN_NAME_RECEIVED_SUCCESS = "receivedSuccess";
     }
 
@@ -92,6 +93,7 @@ public class MenuContract {
                     OrderEntry._ID + " INTEGER PRIMARY KEY," +
                     OrderEntry.COLUMN_NAME_CREATED_AT + " TIMESTAMP NOT NULL,"+
                     OrderEntry.COLUMN_NAME_IS_CURRENT + " BOOLEAN NOT NULL,"+
+                    OrderEntry.COLUMN_NAME_USER_GENERATED_KEY + " TEXT NOT NULL,"+
                     OrderEntry.COLUMN_NAME_PAYMENT_ID + " TEXT,"+
                     OrderEntry.COLUMN_NAME_STATUS + " INTEGER NOT NULL"
                     +")";
@@ -161,7 +163,8 @@ public class MenuContract {
             OrderEntry.COLUMN_NAME_CREATED_AT,
             OrderEntry.COLUMN_NAME_IS_CURRENT,
             OrderEntry.COLUMN_NAME_PAYMENT_ID,
-            OrderEntry.COLUMN_NAME_STATUS
+            OrderEntry.COLUMN_NAME_STATUS,
+            OrderEntry.COLUMN_NAME_USER_GENERATED_KEY
     };
 
     public static final String[] ORDER_ITEM_PROJECTION = {

@@ -12,8 +12,17 @@ public class OrderEntity {
     String phoneNumber;
     String paymentId;
     Long createdAt;
+    String userGeneratedKey;
     Integer status;
     String orderKeyString;
+
+    public String getUserGeneratedKey() {
+        return userGeneratedKey;
+    }
+
+    public void setUserGeneratedKey(String userGeneratedKey) {
+        this.userGeneratedKey = userGeneratedKey;
+    }
 
     public String getOrderKeyString() {
         return orderKeyString;

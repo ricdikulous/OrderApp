@@ -36,6 +36,7 @@ public class DatastoreContract {
         public static final String COLUMN_NAME_PHONE_NUMBER = "phoneNumber";
         public static final String COLUMN_NAME_REGISTRATION_TOKEN = "registrationToken";
         public static final String COLUMN_NAME_CREATED_AT = "createdAt";
+        public static final String COLUMN_NAME_USER_GENERATED_KEY = "userGeneratedKey";
         public static final String COLUMN_NAME_STATUS = "status";
     }
 

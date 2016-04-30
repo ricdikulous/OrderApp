@@ -105,13 +105,13 @@ public class MainActivity extends AppCompatActivity {
     public void handleCreateNewOrderButtonClick(View view){
         mOrderDbHelper.deleteCurrentOrder();
         new AddressDbHelper(this).deleteAllAddresses();
-        mOrderDbHelper.insertNewOrder();
+        mOrderDbHelper.insertNewOrder(mSharedPreferences.getString(Globals.GCM_TOKEN, null));
         startMenu();
     }
 
     public void handleContinueOrderButtonClick(View view){
         if(mOrderDbHelper.readCurrentOrderPk() == 0){
-            mOrderDbHelper.insertNewOrder();
+            mOrderDbHelper.insertNewOrder(mSharedPreferences.getString(Globals.GCM_TOKEN, null));
         }
         startMenu();
     }

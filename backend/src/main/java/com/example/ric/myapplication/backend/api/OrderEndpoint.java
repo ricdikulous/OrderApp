@@ -60,6 +60,10 @@ public class OrderEndpoint {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         orderReceipt.setSuccess(true);//set this to false
+        ///ALSO USE THIS WHEN IMPLEMENTING PROPER ORDER PROTOCOL
+        if(DatastoreUtil.userGeneratedKeyAlreadyExists(orderEntity.getUserGeneratedKey())){
+            log.info("KEY ALREADY EXISTS");
+        }
         if(!paymentIdAlreadyExists(orderEntity.getPaymentId()) || true) {
             log.info("Payment Id does not already exist");
             DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -96,6 +100,7 @@ public class OrderEndpoint {
                 order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_PHONE_NUMBER, orderEntity.getPhoneNumber());
                 order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_REGISTRATION_TOKEN, orderEntity.getRegistrationToken());
                 order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_CREATED_AT, new Date().getTime());
+                order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_USER_GENERATED_KEY,orderEntity.getUserGeneratedKey());
                 order.setProperty(DatastoreContract.OrdersEntry.COLUMN_NAME_STATUS, Globals.ORDER_RECEIVED);
 
                 InputStream is = OrderEndpoint.class.getResourceAsStream("/sdk_config.properties");
