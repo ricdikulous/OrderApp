@@ -330,6 +330,8 @@ public class AddressEntryActivity extends AppCompatActivity {
             if(success) {
                 Intent intent = new Intent(mContext, MonitorOrderActivity.class);
                 intent.putExtra(Globals.EXTRA_ORDER_PK, mOrderPk);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 mContext.startActivity(intent);
             } else {
                 DialogFragment dialog = new OrderSubmitFailedDialog();

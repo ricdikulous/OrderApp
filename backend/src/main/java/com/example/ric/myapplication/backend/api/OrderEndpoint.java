@@ -7,6 +7,7 @@ import com.example.ric.myapplication.backend.model.OrderItemEntity;
 import com.example.ric.myapplication.backend.model.OrderEntity;
 import com.example.ric.myapplication.backend.model.OrderReceiptEntity;
 import com.example.ric.myapplication.backend.util.ChannelUtil;
+import com.example.ric.myapplication.backend.util.DatastoreMenuUtil;
 import com.example.ric.myapplication.backend.util.DatastoreUtil;
 import com.example.ric.myapplication.backend.util.Globals;
 import com.google.api.server.spi.config.Api;
@@ -70,7 +71,7 @@ public class OrderEndpoint {
             List<EmbeddedEntity> orderItems = new ArrayList<>();
             for (OrderItemEntity orderItemEntity : orderEntity.getOrderItemEntities()) {
                 EmbeddedEntity orderItem = new EmbeddedEntity();
-                MenuItemEntity menuItemEntity = DatastoreUtil.readMenuItemEntity(orderItemEntity.getMenuItemKeyString());
+                MenuItemEntity menuItemEntity = DatastoreMenuUtil.readMenuItemEntity(orderItemEntity.getMenuItemKeyString());
                 if(menuItemEntity != null && orderItemEntity.getAmount() > 0) {
                     orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_MENU_NAME, menuItemEntity.getName());
                     orderItem.setProperty(DatastoreContract.OrderItemEmbeddedEntry.COLUMN_NAME_AMOUNT, orderItemEntity.getAmount());

@@ -129,6 +129,7 @@ public class DatastoreUtil {
         return orderEntities;
     }
 
+    /*
     public static MenuItemEntity readMenuItemEntity(String keyString){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
@@ -139,7 +140,7 @@ public class DatastoreUtil {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 
     public static OrderEntity entityToOrderEntity(Entity entity){
         OrderEntity orderEntity = new OrderEntity();

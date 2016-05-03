@@ -80,7 +80,9 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".order.monitor.MonitorOrderActivity" />
+        <activity
+            android:name=".order.monitor.MonitorOrderActivity"
+            />
         <activity android:name=".order.AddressEntryActivity"></activity>
     </application>
 

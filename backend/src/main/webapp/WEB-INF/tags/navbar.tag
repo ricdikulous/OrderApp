@@ -8,6 +8,7 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li><a href="/menu.jsp" class="navbar-link">Menu</a></li>
                 <li><a href="/orders.jsp" class="navbar-link">Orders</a></li>
                 <li><a href="/upload.jsp" class="navbar-link">Add to menu</a></li>
             </ul>

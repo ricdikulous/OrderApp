@@ -1,5 +1,7 @@
 package com.example.ric.myapplication.backend.model;
 
+import com.example.ric.myapplication.backend.util.FormatUtil;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,5 +81,17 @@ public class MenuItemEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getIngredientsString(){
+        return FormatUtil.listToString(ingredients);
+    }
+
+    public String getAllergensString(){
+        return FormatUtil.listToString(allergens);
+    }
+
+    public String getPriceString(){
+        return FormatUtil.longCentsToStringWithoutSign(price);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.ric.myapplication.backend.servlet;
 
+import com.example.ric.myapplication.backend.util.DatastoreMenuUtil;
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -53,17 +56,27 @@ public class UploadMenuItem extends HttpServlet {
         Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
         List<BlobKey> blobKeys = blobs.get("myFile");
 
-        Entity newEntity = new Entity("MenuItem");
 
         while(paramNames.hasMoreElements()){
             String paramName = (String) paramNames.nextElement();
-            newEntity.setProperty(paramName, req.getParameter(paramName));
+            //newEntity.setProperty(paramName, req.getParameter(paramName));
             resp.getWriter().println(paramName + ": " + req.getParameter(paramName));
         }
         //advertisementEntity.setUserId(user.getUserId());
 
         Logger log = Logger.getLogger("Input");
         log.setLevel(Level.INFO);
+
+        Entity newEntity = new Entity("MenuItem");
+
+        if(!req.getParameter("menuItemKeyString").equals("")){
+            newEntity = DatastoreMenuUtil.readMenuItem(req.getParameter("menuItemKeyString"));
+        }
+
+        if(newEntity ==null){
+            //has a key string but couldnt be found
+            //throw some error
+        }
 
         String[] ingredients = req.getParameter("ingredients").split(",");
 
@@ -92,19 +105,28 @@ public class UploadMenuItem extends HttpServlet {
         if(allergensList.size() > 0) {
             newEntity.setProperty("allergens", allergensList);
         }
-        newEntity.setProperty("createdAt", new Date().getTime());
+        if(newEntity.getProperty("createdAt") == null){
+            newEntity.setProperty("createdAt", new Date().getTime());
+        }
+        newEntity.setProperty("updatedAt", new Date().getTime());
         newEntity.setProperty("price", priceInCents);
         newEntity.setProperty("type", Integer.valueOf(req.getParameter("type")));
 
-
-
         ImagesService imagesService = ImagesServiceFactory.getImagesService();
-
-        ServingUrlOptions servingUrlOptions = ServingUrlOptions.Builder.withBlobKey(blobKeys.get(0));
-        String url = imagesService.getServingUrl(servingUrlOptions);
-
-        newEntity.setProperty("servingUrl", url);
-
+        BlobKey blobKey= blobKeys.get(0);
+        final BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+        long size = blobInfo.getSize();
+        if(size > 0){
+            if(newEntity.getProperty("blobKey") != null){
+                blobstoreService.delete( (BlobKey) newEntity.getProperty("blobKey"));
+            }
+            newEntity.setProperty("blobKey", blobKey);
+            ServingUrlOptions servingUrlOptions = ServingUrlOptions.Builder.withBlobKey(blobKey);
+            String url = imagesService.getServingUrl(servingUrlOptions);
+            newEntity.setProperty("servingUrl", url);
+        }else{
+            blobstoreService.delete(blobKey);
+        }
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(newEntity);
