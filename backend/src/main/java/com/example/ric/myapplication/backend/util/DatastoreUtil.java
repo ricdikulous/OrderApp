@@ -86,19 +86,6 @@ public class DatastoreUtil {
         }
     }
 
-    public static HashMap<Long, String> readMenuTypes(){
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query(DatastoreContract.MenuTypesEntry.KIND);
-        PreparedQuery pq = datastore.prepare(q);
-        HashMap<Long, String> typesMap = new HashMap<>();
-        for(Entity result:pq.asIterable()){
-            ArrayList<EmbeddedEntity> types = (ArrayList)result.getProperty("types");
-            for(EmbeddedEntity type:types){
-                typesMap.put((Long) type.getProperty("key"), (String) type.getProperty("name"));
-            }
-        }
-        return typesMap;
-    }
 
     public static OrderEntity readOrderEntity(Key key){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

@@ -26,6 +26,10 @@
         <servlet-class>com.example.ric.myapplication.backend.servlet.UploadMenuItem</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DeleteMenuItem</servlet-name>
+        <servlet-class>com.example.ric.myapplication.backend.servlet.DeleteMenuItem</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>PayPalServlet</servlet-name>
         <servlet-class>com.example.ric.myapplication.backend.servlet.PayPalServlet</servlet-class>
     </servlet>
@@ -54,6 +58,11 @@
         <servlet-name>UploadMenuItem</servlet-name>
         <url-pattern>/uploadmenuitem</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteMenuItem</servlet-name>
+        <url-pattern>/deletemenuitem</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>PayPalServlet</servlet-name>

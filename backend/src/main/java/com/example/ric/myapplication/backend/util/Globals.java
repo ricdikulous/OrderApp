@@ -13,4 +13,7 @@ public class Globals {
     public static final int ORDER_COOKING = 7;
     public static final int ORDER_DISPATCHED = 8;
     public static final int ORDER_COMPLETED = 9;
+
+    public static final int MAX_DESCRIPTION_LENGTH = 1200;
+    public static final int MAX_NAME_LENGTH = 100;
 }

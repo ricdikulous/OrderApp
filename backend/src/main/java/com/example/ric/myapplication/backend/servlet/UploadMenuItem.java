@@ -1,6 +1,8 @@
 package com.example.ric.myapplication.backend.servlet;
 
+import com.example.ric.myapplication.backend.model.DatastoreContract;
 import com.example.ric.myapplication.backend.util.DatastoreMenuUtil;
+import com.example.ric.myapplication.backend.util.Globals;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
@@ -67,7 +69,7 @@ public class UploadMenuItem extends HttpServlet {
         Logger log = Logger.getLogger("Input");
         log.setLevel(Level.INFO);
 
-        Entity newEntity = new Entity("MenuItem");
+        Entity newEntity = new Entity(DatastoreContract.MenuItemsEntry.KIND);
 
         if(!req.getParameter("menuItemKeyString").equals("")){
             newEntity = DatastoreMenuUtil.readMenuItem(req.getParameter("menuItemKeyString"));
@@ -96,42 +98,51 @@ public class UploadMenuItem extends HttpServlet {
             }
         }
 
-        BigDecimal bigDecimal = new BigDecimal(req.getParameter("price"));
-        long priceInCents = bigDecimal.multiply(new BigDecimal(100)).longValue();
+        if(req.getParameter("price").length()>0) {
+            BigDecimal bigDecimal = new BigDecimal(req.getParameter("price"));
+            long priceInCents = bigDecimal.multiply(new BigDecimal(100)).longValue();
+            newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_PRICE, priceInCents);
+        }
 
-        newEntity.setProperty("name", req.getParameter("name"));
-        newEntity.setProperty("description", req.getParameter("description"));
-        newEntity.setProperty("ingredients", ingredientsList);
+
+        newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_NAME, req.getParameter("name").trim());
+        newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_DESCRIPTION, req.getParameter("description"));
+        newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_INGREDIENTS, ingredientsList);
         if(allergensList.size() > 0) {
-            newEntity.setProperty("allergens", allergensList);
+            newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS, allergensList);
         }
-        if(newEntity.getProperty("createdAt") == null){
-            newEntity.setProperty("createdAt", new Date().getTime());
+        if(newEntity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_CREATED_AT) == null){
+            newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_CREATED_AT, new Date().getTime());
         }
-        newEntity.setProperty("updatedAt", new Date().getTime());
-        newEntity.setProperty("price", priceInCents);
-        newEntity.setProperty("type", Integer.valueOf(req.getParameter("type")));
+        newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_UPDATED_AT, new Date().getTime());
+        newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE, Integer.valueOf(req.getParameter("type")));
 
         ImagesService imagesService = ImagesServiceFactory.getImagesService();
         BlobKey blobKey= blobKeys.get(0);
         final BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
         long size = blobInfo.getSize();
         if(size > 0){
-            if(newEntity.getProperty("blobKey") != null){
-                blobstoreService.delete( (BlobKey) newEntity.getProperty("blobKey"));
+            log.info("saving new blob");
+            if(newEntity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_BLOB_KEY) != null){
+                blobstoreService.delete( (BlobKey) newEntity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_BLOB_KEY));
             }
-            newEntity.setProperty("blobKey", blobKey);
+            newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_BLOB_KEY, blobKey);
             ServingUrlOptions servingUrlOptions = ServingUrlOptions.Builder.withBlobKey(blobKey);
             String url = imagesService.getServingUrl(servingUrlOptions);
-            newEntity.setProperty("servingUrl", url);
+            newEntity.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_SERVING_URL, url);
         }else{
+            log.info("deleting blob immediately cause it is empty");
             blobstoreService.delete(blobKey);
         }
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(newEntity);
+        if(validateEntity(newEntity)) {
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.put(newEntity);
+            resp.getWriter().println("<br><a href=\"/upload.jsp\">Add another!</a>");
+        } else {
+            resp.getWriter().println("<br> Error validating data");
+        }
 
-        resp.getWriter().println("<br><a href=\"/upload.jsp\">Add another!</a>");
 
         /*if(req.getParameter("advertisementKeyString") != ""){
             //doing update
@@ -152,5 +163,39 @@ public class UploadMenuItem extends HttpServlet {
             resp.sendRedirect("success.jsp?type=created");
         }*/
 
+    }
+
+    private boolean validateEntity(Entity entity){
+        Logger log = Logger.getLogger("MenuItemValidation");
+        log.setLevel(Level.INFO);
+        String name = (String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_NAME);
+        String description = (String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_DESCRIPTION);
+        List<String> ingredients = (List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_INGREDIENTS);
+        List<String> allergens = (List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS);
+        Long price = (Long) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_PRICE);
+        Integer type = (Integer) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE);
+        BlobKey blobKey = (BlobKey) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_BLOB_KEY);
+        String servingUrl = (String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_SERVING_URL);
+        if( name == null || name.length()>Globals.MAX_NAME_LENGTH ||name.trim().length()<1){
+            log.warning("Name is null or too long or too short");
+            return false;
+        }
+        if(description != null && description.length()> Globals.MAX_DESCRIPTION_LENGTH){
+            log.warning("Description is too long!");
+            return false;
+        }
+        if(price == null || price < 1){
+            log.warning("Price is null or too low");
+            return false;
+        }
+        if(blobKey == null){
+            log.warning("There is no picture ascociated with menu item");
+            return false;
+        }
+        if(servingUrl == null){
+            log.warning("Servig Url is NULL");
+            return false;
+        }
+        return true;
     }
 }

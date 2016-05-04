@@ -15,6 +15,8 @@ public class DatastoreContract {
         public static final String COLUMN_NAME_ALLERGENS = "allergens";
         public static final String COLUMN_NAME_TYPE = "type";
         public static final String COLUMN_NAME_CREATED_AT = "createdAt";
+        public static final String COLUMN_NAME_UPDATED_AT = "updatedAt";
+        public static final String COLUMN_NAME_BLOB_KEY = "blobKey";
     }
 
     public static final class MenuTypesEntry{

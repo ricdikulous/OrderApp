@@ -18,6 +18,24 @@ public class MenuItemEntity {
     Long type;
     List<String> ingredients;
     List<String> allergens;
+    Long createdAt;
+    Long updatedAt;
+
+    public Long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public List<String> getIngredients() {
         return ingredients;
@@ -83,15 +101,4 @@ public class MenuItemEntity {
         this.description = description;
     }
 
-    public String getIngredientsString(){
-        return FormatUtil.listToString(ingredients);
-    }
-
-    public String getAllergensString(){
-        return FormatUtil.listToString(allergens);
-    }
-
-    public String getPriceString(){
-        return FormatUtil.longCentsToStringWithoutSign(price);
-    }
 }
