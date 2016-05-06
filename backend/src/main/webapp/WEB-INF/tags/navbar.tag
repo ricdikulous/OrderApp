@@ -11,6 +11,7 @@
                 <li><a href="/menu.jsp" class="navbar-link">Menu</a></li>
                 <li><a href="/orders.jsp" class="navbar-link">Orders</a></li>
                 <li><a href="/upload.jsp" class="navbar-link">Add to menu</a></li>
+                <li><a href="/categories.jsp" class="navbar-link">Edit categories</a></li>
             </ul>
             <p class="navbar-text navbar-right">${signInLink}</p>
         </div>

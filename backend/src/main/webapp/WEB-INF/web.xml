@@ -69,6 +69,24 @@
         <url-pattern>/paypal</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>UpdateTypesServlet</servlet-name>
+        <servlet-class>com.example.ric.myapplication.backend.servlet.menu.types.UpdateTypesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateTypesServlet</servlet-name>
+        <url-pattern>/updatetypes</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>RemoveTypeServlet</servlet-name>
+        <servlet-class>com.example.ric.myapplication.backend.servlet.menu.types.RemoveTypeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoveTypeServlet</servlet-name>
+        <url-pattern>/removetype</url-pattern>
+    </servlet-mapping>
+
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

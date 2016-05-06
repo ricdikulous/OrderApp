@@ -21,6 +21,7 @@ public class DatastoreContract {
 
     public static final class MenuTypesEntry{
         public static final String KIND = "MenuTypes";
+        public static final String KEY = "types";
         public static final String COLUMN_NAME_TYPES = "types";
     }
 

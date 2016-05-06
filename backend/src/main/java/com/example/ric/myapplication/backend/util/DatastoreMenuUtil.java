@@ -14,10 +14,14 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,16 +30,123 @@ import java.util.logging.Logger;
  */
 public class DatastoreMenuUtil {
 
+    public static void insertMenuTypes(ArrayList<Pair<Long, String>> types){
+        List<EmbeddedEntity> typeEntities = new ArrayList<>();
+        int i=0;
+        for(Pair<Long, String>type:types) {
+            Long key = type.getFirst();
+            String name = type.getSecond();
+            Integer position = i;
+            EmbeddedEntity typeEntity = new EmbeddedEntity();
+            typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_KEY, key);
+            typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_NAME, name);
+            //typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_POSITION, position);
+            typeEntities.add(typeEntity);
+            i++;
+        }
+        Entity entity = new Entity(DatastoreContract.MenuTypesEntry.KIND, DatastoreContract.MenuTypesEntry.KEY);
+        entity.setProperty(DatastoreContract.MenuTypesEntry.COLUMN_NAME_TYPES, typeEntities);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(entity);
+        //put in datastore
+    }
+
+    public static void updateMenuTypes(List<Long> orderedKeys, Map<Long, String> namesMap){
+        List<EmbeddedEntity> typeEntities = new ArrayList<>();
+        List<Entity> updatedMenuItemEntities = new ArrayList<>();
+        for(Integer i=0;i<orderedKeys.size();i++){
+            Long oldKey = orderedKeys.get(i);
+            String name = namesMap.get(oldKey);
+            Long newKey = i.longValue()+1;
+            updatedMenuItemEntities.addAll(updatedMenuItemEntities(oldKey, newKey));
+            EmbeddedEntity typeEntity = new EmbeddedEntity();
+            typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_KEY, newKey);
+            typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_NAME, name);
+            typeEntities.add(typeEntity);
+        }
+        Entity entity = new Entity(DatastoreContract.MenuTypesEntry.KIND, DatastoreContract.MenuTypesEntry.KEY);
+        entity.setProperty(DatastoreContract.MenuTypesEntry.COLUMN_NAME_TYPES, typeEntities);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(entity);
+        datastore.put(updatedMenuItemEntities);
+    }
+
+    public static void removeMenuType(Long keyToRemove){
+        List<EmbeddedEntity> typeEntities = new ArrayList<>();
+        List<Entity> updatedMenuItemEntities = new ArrayList<>();
+
+        HashMap<Long, String> typesMap = readMenuTypes();
+        SortedSet<Long> keys = new TreeSet<Long>(typesMap.keySet());
+        Long newKey = 1L;
+        Logger log = Logger.getLogger("Removing type: "+keyToRemove);
+        log.setLevel(Level.INFO);
+        for(Long key:keys){
+            if(key !=keyToRemove){
+                log.info(key+"=>"+newKey);
+                typeEntities.add(createTypeEmbbededEntity(newKey, typesMap.get(key)));
+                updatedMenuItemEntities.addAll(updatedMenuItemEntities(key, newKey));
+                newKey++;
+            }
+        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity entity = new Entity(DatastoreContract.MenuTypesEntry.KIND, DatastoreContract.MenuTypesEntry.KEY);
+        entity.setProperty(DatastoreContract.MenuTypesEntry.COLUMN_NAME_TYPES, typeEntities);
+        datastore.put(entity);
+        datastore.put(updatedMenuItemEntities);
+    }
+
+    public static EmbeddedEntity createTypeEmbbededEntity(Long key, String name){
+        EmbeddedEntity typeEntity = new EmbeddedEntity();
+        typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_KEY, key);
+        typeEntity.setProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_NAME, name);
+        return typeEntity;
+    }
+
+    private static List<Entity> updatedMenuItemEntities(Long oldKey, Long newKey) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Logger log = Logger.getLogger("Updating types");
+        log.setLevel(Level.INFO);
+        log.info("updating: "+oldKey+"=>"+newKey);
+        Query q = new Query(DatastoreContract.MenuItemsEntry.KIND);
+        Query.Filter typeFilter = new Query.FilterPredicate(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE, Query.FilterOperator.EQUAL, oldKey);
+        q.setFilter(typeFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        List<Entity> entities = new ArrayList<>();
+        for(Entity result:pq.asIterable()){
+            log.info((String)result.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_NAME));
+            result.setProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE, newKey);
+            entities.add(result);
+        }
+        return entities;
+    }
+
+    public static List<Entity> readMenuItemsByType(Long type) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Logger log = Logger.getLogger("Reading types");
+        List<Entity> menuItems = new ArrayList<>();
+        log.setLevel(Level.INFO);
+        Query q = new Query(DatastoreContract.MenuItemsEntry.KIND);
+        Query.Filter typeFilter = new Query.FilterPredicate(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE, Query.FilterOperator.EQUAL, type);
+        q.setFilter(typeFilter);
+        PreparedQuery pq = datastore.prepare(q);
+        for (Entity result : pq.asIterable()) {
+            menuItems.add(result);
+        }
+        return menuItems;
+    }
+
     public static HashMap<Long, String> readMenuTypes(){
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query q = new Query(DatastoreContract.MenuTypesEntry.KIND);
-        PreparedQuery pq = datastore.prepare(q);
         HashMap<Long, String> typesMap = new HashMap<>();
-        for(Entity result:pq.asIterable()){
-            ArrayList<EmbeddedEntity> types = (ArrayList)result.getProperty("types");
+        Key key = KeyFactory.createKey(DatastoreContract.MenuTypesEntry.KIND, DatastoreContract.MenuTypesEntry.KEY);
+        try {
+            Entity typesEntity = datastore.get(key);
+            ArrayList<EmbeddedEntity> types = (ArrayList)typesEntity.getProperty("types");
             for(EmbeddedEntity type:types){
                 typesMap.put((Long) type.getProperty("key"), (String) type.getProperty("name"));
             }
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
         }
         return typesMap;
     }

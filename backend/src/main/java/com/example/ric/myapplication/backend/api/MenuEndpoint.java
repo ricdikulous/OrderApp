@@ -5,6 +5,7 @@ import com.example.ric.myapplication.backend.model.DatastoreContract;
 import com.example.ric.myapplication.backend.model.MenuItemEntity;
 import com.example.ric.myapplication.backend.model.MenuTypesEntity;
 import com.example.ric.myapplication.backend.model.MenuVersionEntity;
+import com.example.ric.myapplication.backend.util.DatastoreMenuUtil;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -42,20 +43,7 @@ public class MenuEndpoint {
     @ApiMethod(name="getMenuTypes")
     public MenuTypesEntity getMenuTypes(){
         MenuTypesEntity menuTypes = new MenuTypesEntity();
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Query q = new Query(DatastoreContract.MenuTypesEntry.KIND);
-        PreparedQuery pq = datastore.prepare(q);
-        for(Entity result:pq.asIterable()){
-            ArrayList<EmbeddedEntity> types = (ArrayList)result.getProperty(DatastoreContract.MenuTypesEntry.COLUMN_NAME_TYPES);
-            HashMap<Long, String> typesMap = new HashMap<>();
-            //Logger log = Logger.getLogger("Getting types");
-            //log.setLevel(Level.INFO);
-            for(EmbeddedEntity type:types){
-                typesMap.put((Long) type.getProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_KEY), (String) type.getProperty(DatastoreContract.TypesEmbeddedEntry.COLUMN_NAME_NAME));
-            }
-            menuTypes.setMenuTypes(typesMap);
-        }
+        menuTypes.setMenuTypes(DatastoreMenuUtil.readMenuTypes());
         return menuTypes;
     }
 
