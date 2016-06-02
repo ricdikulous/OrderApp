@@ -290,6 +290,7 @@
                             '</button>'+
                             '<h4>Server Error</h4>'+
                             '<p>'+message+'</p>'+
+                            '<p>Please try again</p>'+
                         '</div>';
     }
 
