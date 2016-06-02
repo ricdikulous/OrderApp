@@ -171,7 +171,9 @@ public class UploadMenuItem extends HttpServlet {
         String name = (String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_NAME);
         String description = (String) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_DESCRIPTION);
         List<String> ingredients = (List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_INGREDIENTS);
-        List<String> allergens = (List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS);
+        if(entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS) instanceof List) {
+            List<String> allergens = (List<String>) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_ALLERGENS);
+        }
         Long price = (Long) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_PRICE);
         Integer type = (Integer) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_TYPE);
         BlobKey blobKey = (BlobKey) entity.getProperty(DatastoreContract.MenuItemsEntry.COLUMN_NAME_BLOB_KEY);

@@ -94,7 +94,6 @@ public class MenuTabbedActivity extends MenuAbstractActivity implements MenuGall
 
         @Override
         public Fragment getItem(int position) {
-            Log.i(TAG, mTypes.toString());
             return MenuGalleryFragment.newInstance((Long) mTypes.keySet().toArray()[position]);
         }
 

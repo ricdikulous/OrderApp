@@ -96,8 +96,6 @@ public class MenuGalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_menu_gallery, container, false);
-        TextView position = (TextView) view.findViewById(R.id.position);
-        position.setText("type is : " + mTypeFk);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.menu_list);
         mMenuSpinner = (ProgressBar) view.findViewById(R.id.menu_spinner);
