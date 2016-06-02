@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -119,8 +120,10 @@ public class MenuDbHelper extends SQLiteOpenHelper{
         db.endTransaction();
     }
 
-    public HashMap<Long, String> readMenuTypes(){
+    public LinkedHashMap<Long, String> readMenuTypes(){
         SQLiteDatabase db = this.getReadableDatabase();
+        String sortOrder =
+                MenuContract.MenuTypesEntry._ID + " ASC";
         Cursor cursor = db.query(
                 MenuContract.MenuTypesEntry.TABLE_NAME,
                 MenuContract.MENU_TYPES_PROJECTION,
@@ -128,9 +131,9 @@ public class MenuDbHelper extends SQLiteOpenHelper{
                 null,
                 null,
                 null,
-                null
+                sortOrder
         );
-        HashMap<Long, String> typesMap = new HashMap<>();
+        LinkedHashMap<Long, String> typesMap = new LinkedHashMap<>();
         if(cursor != null){
             while (cursor.moveToNext()){
                 Long id = cursor.getLong(cursor.getColumnIndex(MenuContract.MenuTypesEntry._ID));

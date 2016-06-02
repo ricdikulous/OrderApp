@@ -27,6 +27,7 @@ import com.dikulous.ric.orderapp.menu.MenuAbstractActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class MenuTabbedActivity extends MenuAbstractActivity implements MenuGalleryFragment.OnFragmentInteractionListener{
@@ -47,7 +48,7 @@ public class MenuTabbedActivity extends MenuAbstractActivity implements MenuGall
      */
     private ViewPager mViewPager;
 
-    private HashMap<Long, String> mTypes;
+    private LinkedHashMap<Long, String> mTypes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,7 @@ public class MenuTabbedActivity extends MenuAbstractActivity implements MenuGall
 
         @Override
         public Fragment getItem(int position) {
+            Log.i(TAG, mTypes.toString());
             return MenuGalleryFragment.newInstance((Long) mTypes.keySet().toArray()[position]);
         }
 
